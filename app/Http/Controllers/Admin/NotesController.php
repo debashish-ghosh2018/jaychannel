@@ -55,20 +55,20 @@ class NotesController extends Controller
         $validatedData = $request->validate([
             'title'             => 'required|min:1|max:64',
             'content'           => 'required',
-            'status_id'         => 'required',
-            'applies_to_date'   => 'required|date_format:Y-m-d',
+            //'status_id'         => 'required',
+            //'applies_to_date'   => 'required|date_format:Y-m-d',
             'note_type'         => 'required'
         ]);
         $user = auth()->user();
         $note = new Notes();
         $note->title     = $request->input('title');
         $note->content   = $request->input('content');
-        $note->status_id = $request->input('status_id');
+        $note->status_id = 3;    //$request->input('status_id');
         $note->note_type = $request->input('note_type');
-        $note->applies_to_date = $request->input('applies_to_date');
+        $note->applies_to_date = date("Y-m-d H:i:s");    //$request->input('applies_to_date');
         $note->users_id = $user->id;
         $note->save();
-        $request->session()->flash('message', 'Successfully created note');
+        $request->session()->flash('message', 'Successfully created content');
         return redirect()->route('notes.index');
     }
 
@@ -111,18 +111,18 @@ class NotesController extends Controller
         $validatedData = $request->validate([
             'title'             => 'required|min:1|max:64',
             'content'           => 'required',
-            'status_id'         => 'required',
-            'applies_to_date'   => 'required|date_format:Y-m-d',
+            //'status_id'         => 'required',
+            //'applies_to_date'   => 'required|date_format:Y-m-d',
             'note_type'         => 'required'
         ]);
         $note = Notes::find($id);
         $note->title     = $request->input('title');
         $note->content   = $request->input('content');
-        $note->status_id = $request->input('status_id');
+        //$note->status_id = $request->input('status_id');
         $note->note_type = $request->input('note_type');
-        $note->applies_to_date = $request->input('applies_to_date');
+        //$note->applies_to_date = $request->input('applies_to_date');
         $note->save();
-        $request->session()->flash('message', 'Successfully edited note');
+        $request->session()->flash('message', 'Successfully edited content');
         return redirect()->route('notes.index');
     }
 

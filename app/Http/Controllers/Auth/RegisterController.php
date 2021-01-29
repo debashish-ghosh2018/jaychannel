@@ -71,15 +71,15 @@ class RegisterController extends Controller
             $data['data']['error'] = $validator->errors(); 
 
          
-            session()->flash('error', 'Please provide name, email and password!');
-            return redirect()->back();
+            //session()->flash('error', 'Please provide name, email and password!');
+            return redirect()->back()->withInput()->withErrors($validator);
 
         }else{
             $checkUser = User::where('email', $request->email)->first();
             
             if($checkUser) {
                 session()->flash('error', 'User already exists!');
-                return redirect()->back();
+                return redirect()->error_message();
             }else{
                 $user = new User;
                 $user->name = $request['name'];
@@ -108,11 +108,11 @@ class RegisterController extends Controller
                     $userDetail->membership_virtual=0;
                     $userDetail->membership_hybrid=0;
                     $status = $userDetail->save();
-                    session()->flash('success', 'User added successfully!');
+                    session()->flash('success_message', 'User added successfully!');
                     $this->guard()->login($user);
                     return redirect($this->redirectPath());
                 }else{
-                    session()->flash('error', 'Failed to add user!');
+                    session()->flash('error_message', 'Failed to add user!');
                     return redirect()->back();
                 }
             }

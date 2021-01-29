@@ -206,19 +206,23 @@
                <br>
                <!--<h3>$100.00 or Credit/Class</h3>
                <br>-->
-               <div class="quantity buttons_added">
-                  <div class="input-group inline-group">
-                     <input type="number" step="1" min="15" max="" name="quantity" value="15" title="Qty"
-                        class="input-text qty text" size="6" pattern="" inputmode="">
-                     <input type="button" value="+" class="plus"> &nbsp;&nbsp;&nbsp;
-                     <span style="    display: inline-flex; padding-top: 15px;">
-                     Participants
-                     </span>
+               <form method="POST" name="frmAddToCart" id="frmAddToCart" action="{{ route('add_to_cart') }}">
+                  @csrf
+                  <input type="hidden" name="course_id" value="{{ $course_data->id }}" />
+                  <input type="hidden" name="course_credit" value="{{ $course_data->credits }}" />
+                  <input type="hidden" name="course_class_size" value="{{ $course_data->class_size }}" />
+
+                  <div class="quantity buttons_added">
+                    <div class="input-group inline-group">
+                      <input type="number" step="1" min="15" name="quantity" value="15" title="Qty" class="input-text qty text" size="6" />
+                      <input type="button" value="+" class="plus" /> &nbsp;&nbsp;&nbsp;
+                      <span style="display: inline-flex; padding-top: 15px;">Participants</span>
+                    </div>
                   </div>
-               </div>
-               <br><br>
-               <button class=" button button6">Add to Cart</button>
-               <button class=" submit-lg btn-lg">Checkout</button>
+                  <br><br>
+                  <input type="submit" id="btnAddToCart" name="btnAddToCart" class="button button6" value="Add to Cart" />
+                  <input type="submit" id="btnCheckout" name="btnCheckout" class="submit-lg btn-lg" value="Checkout" /> 
+               </form>
             </div>
          </div>
       </div>

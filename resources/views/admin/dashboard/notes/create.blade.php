@@ -8,7 +8,7 @@
               <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6">
                 <div class="card">
                     <div class="card-header">
-                      <i class="fa fa-align-justify"></i> {{ __('Create Note') }}</div>
+                      <i class="fa fa-align-justify"></i> {{ __('Create Content') }}</div>
                     <div class="card-body">
                         <form method="POST" action="{{ route('notes.store') }}">
                             @csrf
@@ -22,7 +22,7 @@
                                 <textarea class="form-control" id="textarea-input" name="content" rows="9" placeholder="{{ __('Content..') }}" required></textarea>
                             </div>
 
-                            <div class="form-group row">
+                            <!--<div class="form-group row">
                                 <label>Applies to date</label>
                                 <input type="date" class="form-control" name="applies_to_date" required/>
                             </div>
@@ -34,10 +34,10 @@
                                         <option value="{{ $status->id }}">{{ $status->name }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div>-->
 
                             <div class="form-group row">
-                                <label>Note type</label>
+                                <label>Content Key</label>
                                 <input class="form-control" type="text" placeholder="{{ __('Note type') }}" name="note_type" required>
                             </div>
  

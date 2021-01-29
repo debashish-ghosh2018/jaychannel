@@ -16,7 +16,7 @@
    <div class="container ">
       <br>
       <br>
-      <h2 class="padding content-padding">Welcome back, Jack!</h2>
+      <h2 class="padding content-padding">Welcome back, {{$you['name']}}!</h2>
       <br>
       <div class="notification-box">
                           @if(Session::has('success_message'))

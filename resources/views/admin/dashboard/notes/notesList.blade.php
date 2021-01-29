@@ -20,9 +20,9 @@
                             <th>Author</th>
                             <th>Title</th>
                             <th>Content</th>
-                            <th>Applies to date</th>
-                            <th>Status</th>
-                            <th>Note type</th>
+                            <!--<th>Applies to date</th>-->
+                            <!--<th>Status</th>-->
+                            <th>Content Key</th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -34,12 +34,12 @@
                               <td><strong>{{ $note->user->name }}</strong></td>
                               <td><strong>{{ $note->title }}</strong></td>
                               <td>{{ $note->content }}</td>
-                              <td>{{ $note->applies_to_date }}</td>
+                              <!--<td>{{ $note->applies_to_date }}</td>
                               <td>
                                   <span class="{{ $note->status->class }}">
                                       {{ $note->status->name }}
                                   </span>
-                              </td>
+                              </td>-->
                               <td><strong>{{ $note->note_type }}</strong></td>
                               <td>
                                 <a href="{{ url('/admin/notes/' . $note->id) }}" class="btn btn-block btn-primary">View</a>

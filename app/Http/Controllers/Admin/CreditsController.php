@@ -219,6 +219,8 @@ class CreditsController extends Controller
 
     public function update_details(Request $request, $id)
     {
+        //var_dump('bazinga');
+
         $validatedData = $request->validate([
             'title'             => 'required|min:1|max:64',
             'content'           => 'required',

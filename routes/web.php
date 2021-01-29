@@ -12,19 +12,28 @@
 */
 
 Route::get('/', 'HomeController@index')->name('home');
+Route::get('/redirect_to_home_login', 'HomeController@redirectToHomeLogin')->name('redirect_to_home_login');
+Route::get('/show_admin_login', 'Auth\LoginController@showLoginForm')->name('show_admin_login');
+
+
 Route::get('/member_login', 'HomeController@member_signin')->name('member_login');
 Route::get('/enterprise_login', 'HomeController@enterprise_signin')->name('enterprise_login');
 Route::get('/signinvendor_login', 'HomeController@vendor_signin')->name('signinvendor_login');
 
+
 Route::get('/our_services/{content_type?}', 'HomeController@our_services')->name('our_services_view_all');
 Route::get('/course_details/{course_id?}', 'CourseController@course_details')->name('view_course_details');
+
 
 Route::get('/member_dashboard', 'Buyer\DashboardController@index')->name('show_member_dashboard');
 Route::post('/add_card_details', 'Buyer\DashboardController@addCardDetails')->name('add_card_details');
 Route::get('/member_manage_classes', function () { return view('buyer.manage_classes'); })->name('show_member_classes');
 
-Route::get('/enterprise_dashboard', 'Buyer\DashboardController@index')->name('show_enterprise_dashboard');
-Route::get('/enterprise_account', function () { return view('enterprise.account'); })->name('show_enterprise_account');
+
+Route::get('/enterprise_dashboard', function () { return view('enterprise.dashboard'); })->name('show_enterprise_dashboard');
+Route::post('/add_enterprise_card_details', 'Enterprise\DashboardController@addEnterpriseCardDetails')->name('add_enterprise_card_details');
+Route::get('/enterprise_account', 'Enterprise\DashboardController@index')->name('show_enterprise_account');
+
 
 Route::get('/signinvendor_dashboard', 'HomeController@vendor_dashboard')->name('show_signinvendor_dashboard');
 Route::post('/update_signinvendor_dashboard', 'HomeController@update_user_data')->name('update_signinvendor_dashboard');
@@ -36,10 +45,18 @@ Route::post('/signinvendor_savenewcourse', 'CourseController@store')->name('show
 
 Route::get('/signinvendor_finance', function () { return view('vendor.finance'); })->name('show_signinvendor_finance');
 
+
 Route::post('/subscribe', 'SubscribeController@store')->name('save_subscriber');
 Route::post('/search_vendor', 'HomeController@searchVendor')->name('search_vendor');
 Route::post('/show_vendor_details', 'HomeController@showVendorDetails')->name('show_vendor_details');
 Route::post('/show_credit_details', 'HomeController@showCreditDetails')->name('show_credit_details');
+
+
+Route::get('/cart_checkout', 'CartController@checkout')->name('checkout.cart');
+Route::get('/cart/item/{id}/remove', 'CartController@removeItem')->name('checkout.cart.remove');
+Route::get('/cart/clear', 'CartController@clearCart')->name('checkout.cart.clear');
+Route::post('/add_to_cart', 'CartController@addToCart')->name('add_to_cart');
+Route::get('/view_cart', 'CartController@index')->name('view_cart');
 
 
 /*
@@ -73,11 +90,12 @@ Route::get('/logout', function(){
 */
 Route::prefix('admin')->namespace('Admin')->middleware(['get.menu'])->group(function() {    
     Route::get('/', function () {
-        if (Auth::check()) {
+        if (Auth::check()) {   // && Auth::user()->isAdmin()
             return view('admin.dashboard.homepage'); 
         }
-
-        return Redirect::to('/login');
+        else{
+            return view('admin.redirect_to_login'); 
+        }
     });
 
     Route::group(['middleware' => ['role:user']], function () {
@@ -125,12 +143,12 @@ Route::prefix('admin')->namespace('Admin')->middleware(['get.menu'])->group(func
             Route::get('/modals', function(){   return view('admin.dashboard.notifications.modals'); });
         });
         Route::resource('notes', 'NotesController');
-
+		
         Route::resource('credits', 'CreditsController');
-        Route::get('/', 'CreditsController@index')->name('listCredits');
+        Route::get('list_credits', 'CreditsController@index')->name('listCredits');
         Route::post('update_credit/{id?}', 'CreditsController@update_details')->name('credit_update');
-        Route::post('save_credit', 'CreditsController@save_details')->name('credit_save');        
-        
+        Route::post('save_credit', 'CreditsController@save_details')->name('credit_save'); 
+		
         Route::resource('subscribers', 'SubscribersController'); 
         Route::resource('content_types', 'ContentTypesController');                
     });

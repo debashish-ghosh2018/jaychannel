@@ -10,10 +10,13 @@ use App\Models\UserInfo;
 use App\Models\Courses;
 use App\Models\ContentTypes;
 use App\Models\Credits;
+use App\Models\Notes;
 
 
 class HomeController extends Controller
 {
+
+    //Cart functionality reference url https://www.larashout.com/laravel-e-commerce-application-development-shopping-cart
 
     /**
      * Create a new controller instance.
@@ -32,20 +35,44 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $content_types = ContentTypes::ALL();
-        $courses = Courses::orderBy('created_at', 'desc')->inRandomOrder()->limit(6)->get();
-        $credits = Credits::where('status', '=', 1)->orderBy('id', 'asc')->limit(4)->get();
 
-		return view('home', ['courses' => $courses, 'content_types' => $content_types, 'credits' => $credits]);
+        //$user = Auth::user();
+        //dd($user);
+
+        $content_types = ContentTypes::ALL();
+        //dd($content_types);        
+
+        $courses = Courses::orderBy('created_at', 'desc')->inRandomOrder()->limit(6)->get();
+        //dd($course);
+
+        $credits = Credits::where('status', '=', 1)->orderBy('id', 'asc')->limit(4)->get();
+        //dd($credits);
+
+        $way_we_care = Notes::where('note_type', '=', 'way_we_care')->get(); 
+        if(!empty($way_we_care[0])){
+            $way_we_care = $way_we_care[0];
+        }
+
+        $how_it_work = Notes::where('note_type', '=', 'how_it_work')->get();
+        if(!empty($how_it_work[0])){
+            $how_it_work = $how_it_work[0];
+        }         
+
+        //dd($way_we_care);       
+
+		return view('home', ['courses' => $courses, 'content_types' => $content_types, 'credits' => $credits, 'way_we_care' => $way_we_care, 'how_it_work' => $how_it_work]);
     }
 
     public function our_services($content_type = null, Request $request){
 
         $content_types = ContentTypes::ALL();
+        //dd($content_types);        
+        
         if(!empty($content_type)){
             $courses = Courses::where('content_type_id', '=', $content_type)->orderBy('created_at', 'desc')->inRandomOrder()->paginate( 20 );
         }else{
             $courses = Courses::orderBy('created_at', 'desc')->inRandomOrder()->paginate( 20 );
+            //dd($course);       
         }
 
         return view('ourservices', ['courses' => $courses, 'content_types' => $content_types]);  
@@ -54,6 +81,7 @@ class HomeController extends Controller
     public function member_signin()
     {
         $user = Auth::user();
+        //dd($user);
 
         if(!empty($user)){
             return $this->redirect_user_to_dashboard($user);
@@ -66,6 +94,7 @@ class HomeController extends Controller
     public function vendor_signin()
     {
         $user = Auth::user();
+        //dd($user);
 
         if(!empty($user)){
             return $this->redirect_user_to_dashboard($user);
@@ -78,7 +107,8 @@ class HomeController extends Controller
     public function enterprise_signin()
     {
         $user = Auth::user();
-
+        //dd($user);
+        
         if(!empty($user)){
             return $this->redirect_user_to_dashboard($user);
         }
@@ -95,6 +125,7 @@ class HomeController extends Controller
             if(!empty($user_details[0])){
                 $user_details = $user_details[0];
             }
+            //dd($user_details);
 
             $user_data = array(
                             'id' => $user->id,
@@ -148,6 +179,8 @@ class HomeController extends Controller
     public function update_user_data(Request $request)
     {
         $user = Auth::user();      
+
+        //die('sdklfsdkfjls');
         $validatedData = $request->validate([
             'fld_enterprise_name' => 'required|min:1|max:200',
             'fld_business_type' => 'required',
@@ -234,7 +267,7 @@ class HomeController extends Controller
         else{
             $vendors = UserInfo::where('business_address_zipcode', $postData['zipcode'])->orderBy('created_at', 'desc')->inRandomOrder()->limit(4)->get();
         }
-
+        
         $content = '';
         foreach ($vendors as $key => $vendor) {
             $content .= '<p class="">
@@ -286,6 +319,7 @@ class HomeController extends Controller
 
         $postData = $request->all();
         $content = ''; 
+        //$postData['vendor_id'] = 12;       
         if(!empty($postData['vendor_id'])){
             $vendor = UserInfo::where('user_id', $postData['vendor_id'])->get();
 
@@ -376,7 +410,11 @@ class HomeController extends Controller
         }
 
         return $content;
-    }         
+    } 
+
+    public function redirectToHomeLogin(){
+        return redirect()->route('show_admin_login');  
+    }             
 
     private function redirect_user_to_dashboard($user)
     {
