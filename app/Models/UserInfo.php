@@ -25,4 +25,8 @@ class UserInfo extends Model
     public function vendorCourses(){
         return $this->hasMany('App\Models\Courses', 'user_id');
     }
+
+    public function User(){
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

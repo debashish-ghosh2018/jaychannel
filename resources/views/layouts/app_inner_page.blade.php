@@ -300,7 +300,7 @@
 
         <!--custom functions and script-->
         <script src="{{ asset('assets/app/js/functions.js') }}"></script>
-        <script src="{{ asset('assets/app/js/slide.js') }}"></script>
+        <!--<script src="{{ asset('assets/app/js/slide.js') }}"></script>-->
 
         <script src="{{ asset('assets/app/dist/good-share.min.js') }}"></script>
 

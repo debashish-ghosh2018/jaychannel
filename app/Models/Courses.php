@@ -24,5 +24,9 @@ class Courses extends Model
     public function Owner()
     {
         return $this->hasOne('App\Models\UserInfo', 'user_id', 'user_id');
-    }    
+    } 
+
+    public function coursesBooked(){
+        return $this->hasMany('App\Models\UserCourseOrderLists', 'course_id');
+    }  
 }

@@ -69,7 +69,7 @@
                      <tr>
                         <td class="blue"><a href="{{ route('show_signinvendor_editcourse') }}/{{ $course->id }}">{{ $course->id }}</a></td>
                         <td class="blue"><a href="{{ route('show_signinvendor_editcourse') }}/{{ $course->id }}">{{ $course->title }}</a></td>
-                        <td>0</td>
+                        <td>{{ $course->signut_cnt }}</td>
                      </tr>
                      @endforeach
                      <!--<tr>

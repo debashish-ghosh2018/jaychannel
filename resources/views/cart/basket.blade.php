@@ -33,11 +33,11 @@
                     @foreach($cart_content as $item)
                   <div class="row">
                      <div class="col-lg-2">
-                        <img src="{{ config('app.url') }}/storage/app/course_browser_image/{{ $item['course_image'] }}" class="imgwidth" />
+                        <img src="{{ config('app.url') }}/storage/app/{{ $item['image'] }}" class="imgwidth" />
                      </div>
                      <div class="col-lg-6">
-                        <h4 class="blackcolor">{{ $item['course_title'] }}</h4>
-                        <h6 class="lightcolor">By {{ $item['course_vendor'] }}
+                        <h4 class="blackcolor">{{ $item['title'] }}</h4>
+                        <h6 class="lightcolor">By {{ $item['details'] }}
                         </h6>
                      </div>
                      <div class="col-lg-2">
@@ -46,8 +46,8 @@
                         <br>
                      </div>
                      <div class="col-lg-2">
-                        <h6 class="mb-1 mt-1"><span class="textred "><a href="#">{{ $item['cart_qty'] }}</a> (Participants)</span></h6>
-                        <h6 class="txtlinethrough_none"><span class="lightcolor"><a href="#">{{ $item['cart_item_price'] }}</a> (Credits)</span>
+                        <h6 class="mb-1 mt-1"><span class="textred "><a href="#">{{ $item['cart_qty'] }}</a> {{ $item['qty_unit'] }}</span></h6>
+                        <h6 class="txtlinethrough_none"><span class="lightcolor">{{ $currency_symbol }} <a href="#">{{ $item['cart_item_price'] }}</a> {{ $item['price_unit'] }}</span>
                         </h6>
                         <br>
                      </div>
@@ -64,7 +64,7 @@
          </div>
          <div class="col-lg-3">
             <h6 class="lightcolor mb-2">Total</h6>
-            <h2 class="blackcolor boldtxt mb-1">{{ $total_price }} </h2><span class="lightcolor">Credit Points</span>
+            <h2 class="blackcolor boldtxt mb-1">{{ $currency_symbol }} {{ $total_price }} </h2><span class="lightcolor">{{ $total_unit }}</span>
             <!--<h6 class="txtlinethrough mb-1"><span class="lightcolor"><a href="#">{{ $total_price }}</a></span></h6>
             <h6 class="mb-3"><span class="lightcolor"><a href="#">90% off</a></span></h6>-->
             <button class="submit btncheckout mb-3"><a href="{{ route('checkout.cart') }}">Checkout</a></button>

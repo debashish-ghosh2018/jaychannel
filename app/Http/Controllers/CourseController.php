@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\Courses;
 use App\Models\ContentTypes;
+use App\Models\UserCourseOrderLists;
 
 
 class CourseController extends Controller
@@ -49,13 +50,21 @@ class CourseController extends Controller
             //dd($user_info);
 
             $user_course_info = $user->myCourses()->get();
-            //dd($user_course_info);            
+            //dd($user_course_info); 
+
+            $course_info = array();
+            $course_info[] = array();
+            foreach ($user_course_info as $key => $course) {
+                $courseOrders = UserCourseOrderLists::where('course_id', $course->id)->get()->count();
+                $course_info[$key] = (object)array('id' => $course->id, 'title' => $course->title, 'signut_cnt' => $courseOrders);
+            } 
+            //dd($course_info);          
 
             if($user->isMember()){
                 //return view('vendor.dashboard', ['user_info' => $user_info]);
             }
             elseif($user->isVendor()){
-                return view('vendor.manageclasses', ['user_course_info' => $user_course_info, 'user_info' => $user_info, 'vendor_logo_upload_path' => $user->get_vendor_logo_upload_path()]);
+                return view('vendor.manageclasses', ['user_course_info' => $course_info, 'user_info' => $user_info, 'vendor_logo_upload_path' => $user->get_vendor_logo_upload_path()]);
             }
             elseif($user->isEnterprise()){
                 //return view('vendor.dashboard', ['user_info' => $user_info]);
@@ -288,13 +297,11 @@ class CourseController extends Controller
             $owner_data = $course_data->Owner()->get();
             //dd($owner_data);
 
-
             return view('coursedetails', ['course_data' => $course_data, 'content_types' => $content_types, 'owner_data' => $owner_data[0]]);      
         }
         else{
             return redirect()->route('home');
         }
-     
     }
 
     private function saveImageFile($uploadFile, $storage)

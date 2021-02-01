@@ -211,10 +211,12 @@
                   <input type="hidden" name="course_id" value="{{ $course_data->id }}" />
                   <input type="hidden" name="course_credit" value="{{ $course_data->credits }}" />
                   <input type="hidden" name="course_class_size" value="{{ $course_data->class_size }}" />
+                  <input type="hidden" name="transaction_type" value="course_order" />
 
                   <div class="quantity buttons_added">
                     <div class="input-group inline-group">
-                      <input type="number" step="1" min="15" name="quantity" value="15" title="Qty" class="input-text qty text" size="6" />
+                      <input type="button" value="-" class="minus" style="padding: 0px 10px;background-color: #ffffff;border: 1px solid #efefef;border-left-color: rgb(239, 239, 239);border-left-style: solid;border-left-width: 1px;cursor: pointer;" />
+                      <input type="number" step="1" min="15" name="quantity" id="cartQuantity" value="15" title="Qty" class="input-text qty text" size="6" required />
                       <input type="button" value="+" class="plus" /> &nbsp;&nbsp;&nbsp;
                       <span style="display: inline-flex; padding-top: 15px;">Participants</span>
                     </div>
@@ -340,6 +342,18 @@
       }
     }
 
+    $('.minus').click(function() {
+        var cartQty = $('#cartQuantity').val();
+        cartQty = parseInt(cartQty) - 1;
+        $('#cartQuantity').val(cartQty);
+    });
+
+    $('.plus').click(function() {
+        var cartQty = $('#cartQuantity').val();
+        cartQty = parseInt(cartQty) + 1;
+        $('#cartQuantity').val(cartQty);
+    });        
+
     $('#myCarousel').carousel({
         interval: false
     });
@@ -383,7 +397,7 @@
     });
 
     // when user swipes, go next or previous
-    $('#myCarousel').swipe({
+    /*$('#myCarousel').swipe({
         fallbackToMouseEvents: true,
         swipeLeft: function (e) {
             $('#myCarousel').carousel('next');
@@ -394,7 +408,7 @@
         allowPageScroll: 'vertical',
         preventDefaultEvents: false,
         threshold: 75
-    });
+    });*/
 
     $('#myCarousel .carousel-item img').on('click', function (e) {
         var src = $(e.target).attr('data-remote');

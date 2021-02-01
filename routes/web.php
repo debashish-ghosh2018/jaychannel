@@ -42,8 +42,7 @@ Route::get('/signinvendor_manageclasses', 'CourseController@index')->name('show_
 Route::get('/signinvendor_createcourse', 'CourseController@create_course')->name('show_signinvendor_createcourse');
 Route::get('/signinvendor_editcourse/{id?}', 'CourseController@edit_course')->name('show_signinvendor_editcourse');
 Route::post('/signinvendor_savenewcourse', 'CourseController@store')->name('show_signinvendor_savenewcourse');
-
-Route::get('/signinvendor_finance', function () { return view('vendor.finance'); })->name('show_signinvendor_finance');
+Route::get('/signinvendor_finance', 'HomeController@show_vendor_finamce')->name('show_signinvendor_finance');
 
 
 Route::post('/subscribe', 'SubscribeController@store')->name('save_subscriber');
@@ -57,6 +56,7 @@ Route::get('/cart/item/{id}/remove', 'CartController@removeItem')->name('checkou
 Route::get('/cart/clear', 'CartController@clearCart')->name('checkout.cart.clear');
 Route::post('/add_to_cart', 'CartController@addToCart')->name('add_to_cart');
 Route::get('/view_cart', 'CartController@index')->name('view_cart');
+Route::post('/place_order', 'CartController@placeOrder')->name('place_order');
 
 
 /*

@@ -11,6 +11,8 @@ use App\Models\Courses;
 use App\Models\ContentTypes;
 use App\Models\Credits;
 use App\Models\Notes;
+use App\Models\UserCourseOrders;
+use App\Models\UserCourseOrderLists;
 
 
 class HomeController extends Controller
@@ -35,10 +37,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-
-        //$user = Auth::user();
-        //dd($user);
-
         $content_types = ContentTypes::ALL();
         //dd($content_types);        
 
@@ -180,7 +178,6 @@ class HomeController extends Controller
     {
         $user = Auth::user();      
 
-        //die('sdklfsdkfjls');
         $validatedData = $request->validate([
             'fld_enterprise_name' => 'required|min:1|max:200',
             'fld_business_type' => 'required',
@@ -256,6 +253,46 @@ class HomeController extends Controller
         $request->session()->flash('message', 'Successfully update details');
         $request->session()->flash('alert-class', 'alert-success'); 
         return redirect()->route('show_signinvendor_dashboard');                 
+    }
+
+    public function show_vendor_finamce(){
+        $user = Auth::user(); 
+
+        if(!empty($user)){
+            $user_details = $user->myDetails()->get();
+            if(!empty($user_details[0])){
+                $user_details = $user_details[0];
+            }
+            //dd($user_details);
+
+            $user_course_ids = array();
+            $courses = Courses::where('user_id', '=', $user->id)->get();
+            //dd($courses);
+
+            foreach($courses as $course){
+                $user_course_ids[] = $course->id;
+            }
+            //dd($user_course_ids);
+
+
+            $user_order_ids = array();
+            $courseOrders = UserCourseOrderLists::whereIn('course_id', $user_course_ids)->get(); 
+            //dd($courseOrders);     
+
+            foreach($courseOrders as $courseOrder){
+                $user_order_ids[] = $courseOrder->class_booking_id;
+            }
+
+
+            $orders = UserCourseOrders::whereIn('id', $user_order_ids)->get();
+            //dd($orders);
+
+            return view('vendor.finance', ['orders' => $orders, 'user_info' => $user_details]); 
+        }
+        else{
+            $request->session()->flash('message', 'You are not currently login. Please login to go to finance section.');
+            return redirect()->route('home');
+        }                
     }       
 
     public function searchVendor(Request $request){
@@ -267,9 +304,14 @@ class HomeController extends Controller
         else{
             $vendors = UserInfo::where('business_address_zipcode', $postData['zipcode'])->orderBy('created_at', 'desc')->inRandomOrder()->limit(4)->get();
         }
+        //dd($vendors);
         
         $content = '';
         foreach ($vendors as $key => $vendor) {
+          //dd($vendor->User()->get());
+          $userObj = $vendor->User()->get();
+          if(!empty($userObj[0]) && $userObj[0]->user_type == 'Vendor'){
+
             $content .= '<p class="">
                   <span> <img src="'.asset('assets/app/images/H_Logo.png').'" style="width: 40px;" /></span>
                   <span class="blue"><a href="#activeDay" onClick="show_vendor_details('.$vendor->user_id.')">'.$vendor->enterprise_name.', '.$vendor->location.'</a></span>&nbsp;&nbsp;';
@@ -310,6 +352,8 @@ class HomeController extends Controller
                     $content .= '<button class="button1 button5">Vocational Help</button>';
                 }   
             $content .= '</p>';
+
+          }
         }
 
         return $content;
@@ -318,8 +362,7 @@ class HomeController extends Controller
     public function showVendorDetails(Request $request){
 
         $postData = $request->all();
-        $content = ''; 
-        //$postData['vendor_id'] = 12;       
+        $content = '';     
         if(!empty($postData['vendor_id'])){
             $vendor = UserInfo::where('user_id', $postData['vendor_id'])->get();
 
@@ -404,7 +447,7 @@ class HomeController extends Controller
                 $credit = $credit[0];
 
                 if($credit->is_for_sale == 1){
-                    $content .= '<div class="col-lg-4 offset-lg-1 col-md-5 col-sm-5 wow "><div class="image"><img alt="SEO" src="'.config('app.url').'/storage/app/credit_homepage_image/'.$credit->homepage_image.'"></div></div><div class="col-lg-6 col-md-7 col-sm-7 text-sm-left text-center wow "><div class="heading-title col-md-10 mb-3"><h3>'.$credit->title.'</h3><br><ul class="ul ullist"><li>Purchase '.$credit->points.' credits for $'.number_format($credit->cost_amount).'</li><li>&'.number_format(($credit->cost_amount/$credit->points)).' / credit</li><li>'.$credit->content.'</li><li>One year expiration</li><li>'.(($credit->is_auto_renewal == 1)?'Automatic refill available':'Automatic refill not available').'</li></ul><br><div class="row"><div class="col-lg-4">&nbsp; &nbsp;&nbsp;<i style="font-size:24px;color: black;" class="fa">&#xf004;</i><br>Wish List&nbsp;</div><div class="col-lg-4">&nbsp;<i style=\'font-size:24px;color: black;\' class=\'fa\'>&#xf064;</i><br>Share</div></div><br><div class="quantity buttons_added"><div class="input-group inline-group"><h3 class="inline"><span style="padding-top: 10px;display: inline-flex;">$'.number_format($credit->cost_amount).'</span> &nbsp; &nbsp; &nbsp;</h3><input type="number" step="1" min="15" max="" name="quantity" value="15" title="Qty" class="input-text qty text" size="6" pattern="" inputmode=""><input type="button" value="+" class="plus"></div></div><br><br><label class="switch"><input type="checkbox" checked="checked"><span class="slider round"> </span></label> &nbsp; Auto-Renewal<br><br><button class=" button button6 ">Add to Cart</button><button class="submit-lg button">Checkout</button></div></div>';
+                    $content .= '<input type="hidden" name="credit_id" value="'.$credit->id.'" /><input type="hidden" name="credit_points" value="'.$credit->points.'" /><input type="hidden" name="credit_cost_amount" value="'.$credit->cost_amount.'" /><input type="hidden" name="transaction_type" value="credit_purchase" /><div class="col-lg-4 offset-lg-1 col-md-5 col-sm-5 wow "><div class="image"><img alt="SEO" src="'.config('app.url').'/storage/app/credit_homepage_image/'.$credit->homepage_image.'"></div></div><div class="col-lg-6 col-md-7 col-sm-7 text-sm-left text-center wow "><div class="heading-title col-md-10 mb-3"><h3>'.$credit->title.'</h3><br><ul class="ul ullist"><li>Purchase '.$credit->points.' credits for $'.number_format($credit->cost_amount).'</li><li>&'.number_format(($credit->cost_amount/$credit->points)).' / credit</li><li>'.$credit->content.'</li><li>One year expiration</li><li>'.(($credit->is_auto_renewal == 1)?'Automatic refill available':'Automatic refill not available').'</li></ul><br><div class="row"><div class="col-lg-4">&nbsp; &nbsp;&nbsp;<i style="font-size:24px;color: black;" class="fa">&#xf004;</i><br>Wish List&nbsp;</div><div class="col-lg-4">&nbsp;<i style=\'font-size:24px;color: black;\' class=\'fa\'>&#xf064;</i><br>Share</div></div><br><div class="quantity buttons_added"><div class="input-group inline-group"><h3 class="inline"><span style="padding-top: 10px;display: inline-flex;">$'.number_format($credit->cost_amount).'</span> &nbsp; &nbsp; &nbsp;</h3><input type="button" value="-" class="minus" style="padding: 0px 10px;background-color: #ffffff;border: 1px solid #efefef;border-left-color: rgb(239, 239, 239);border-left-style: solid;border-left-width: 1px;cursor: pointer;" /><input type="number" step="1" min="1" name="quantity" id="cartQuantity" value="1" title="Qty" class="input-text qty text" size="6" required /><input type="button" value="+" class="plus" /></div></div><br><br><label class="switch"><input type="checkbox" checked="checked" value="1" name="fldAutoRenewal" /><span class="slider round"> </span></label> &nbsp; Auto-Renewal<br><br><input type="submit" id="btnAddToCart" name="btnAddToCart" class="button button6" value="Add to Cart" /><input type="submit" id="btnCheckout" name="btnCheckout" class="submit-lg btn-lg" value="Checkout" /></div></div><script>$(\'.minus\').click(function() { var cartQty = $(\'#cartQuantity\').val(); cartQty = parseInt(cartQty) - 1; $(\'#cartQuantity\').val(cartQty); }); $(\'.plus\').click(function() { var cartQty = $(\'#cartQuantity\').val(); cartQty = parseInt(cartQty) + 1; $(\'#cartQuantity\').val(cartQty); });</script>';
                 }
             }           
         }

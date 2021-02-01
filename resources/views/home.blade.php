@@ -41,7 +41,7 @@
                      <a onclick="signin()" class="nav-link dropbtn">Welcome ({{ Auth::user()->name }})</a>
                      <div id="loginDropdown" class="dropdown-content">
                         <a href="{{ route(Auth::user()->getUserAccountUrl()) }}">Manage Profile</a>
-						<a href="{{ route('view_cart') }}">View Cart</a>
+                        <a href="{{ route('view_cart') }}">View Cart</a>
                         <a href="{{ route('user_logout') }}">Sign Out</a>
                      </div>                      
                   @endauth
@@ -89,7 +89,7 @@
                      <a onclick="myFunction()" class="nav-link dropbtn">Welcome ({{ Auth::user()->name }})</a>
                      <div id="loginDropdown" class="dropdown-content">
                           <a href="{{ route(Auth::user()->getUserAccountUrl()) }}">Manage Profile</a>
-						  <a href="{{ route('view_cart') }}">View Cart</a>
+                          <a href="{{ route('view_cart') }}">View Cart</a>
                           <a href="{{ route('user_logout') }}">Sign Out</a>
                      </div>                      
                   @endauth                  
@@ -871,6 +871,8 @@
 </div>
 <!--Some Feature ends-->
 <section id="our-feature" class="single-feature padding">
+  <form method="POST" name="frmAddToCart" id="frmAddToCart" action="{{ route('add_to_cart') }}">
+   @csrf
    <div id="panel" class="container" style="display: block;">
       <div class="row d-flex" id="section_credit_details" style="display: none;">
          <!--<div class="col-lg-4 offset-lg-1 col-md-5 col-sm-5 wow ">
@@ -937,6 +939,7 @@
          </div>-->
       </div>
    </div>
+  </form>
 </section>
 <br>
 <br>
@@ -1244,10 +1247,22 @@
 
       $( "#fldSearchVendor" ).keyup(function() {
          search_nearby_vendor($(this).val());
-      });      
+      });  
 
-      //search_nearby_vendor('');
+      search_nearby_vendor('');
    });
+
+  $('.minus').click(function() {
+    var cartQty = $('#cartQuantity').val();
+    cartQty = parseInt(cartQty) - 1;
+    $('#cartQuantity').val(cartQty);
+  });
+
+  $('.plus').click(function() {
+    var cartQty = $('#cartQuantity').val();
+    cartQty = parseInt(cartQty) + 1;
+    $('#cartQuantity').val(cartQty);
+  });   
 
    function signin() {
       document.getElementById("loginDropdown").classList.toggle("show");

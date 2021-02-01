@@ -14,7 +14,7 @@
    <div class="container ">
       <br>
       <br>
-      <h2 class="padding content-padding">Welcome back, EasterSeals!</h2>
+      <h2 class="padding content-padding">Welcome back, {{ $user_info->enterprise_name }}!</h2>
       <br>
    </div>
    <!--  -->
@@ -45,13 +45,15 @@
                      </tr>
                   </thead>
                   <tbody>
+                    @foreach ($orders as $order)
                      <tr >
-                        <td class="blue">0348876</td>
-                        <td class="blue">Nov 2020 </td>
-                        <td class="blue">5,400</td>
-                        <td class="blue">Pending</td>
+                        <td class="blue">{{ $order->booking_no }}</td>
+                        <td class="blue"><?php echo date("M Y", strtotime($order->created_at)); ?></td>
+                        <td class="blue">{{ $order->credit_used }}</td>
+                        <td class="blue">Completed</td>
                      </tr>
-                     <tr>
+                    @endforeach
+                     <!--<tr>
                         <td>0348661</td>
                         <td> Oct 2020</td>
                         <td>6,880</td>
@@ -92,7 +94,7 @@
                         <td>Apr</td>
                         <td>15,005</td>
                         <td>Done</td>
-                     </tr>
+                     </tr>-->
                   </tbody>
                </table>
             </div>
@@ -100,7 +102,7 @@
       </div>
    </div>
 </section>
-<section>
+<!--<section>
    <div class="container padding_top text-center">
       <h3>Hey EasterSeals Southern California,
          <br>
@@ -109,7 +111,7 @@
       <br><br>
       <h3>The Class No. is: <br> 0348876</h3>
    </div>
-</section>
+</section>-->
 <br>
 <br>
 <br>

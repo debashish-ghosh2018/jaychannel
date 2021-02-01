@@ -8,16 +8,16 @@
                 <div class="col-sm-6 col-lg-3">
                   <div class="card text-white bg-primary">
                     <div class="card-body pb-0">
-                      <div class="btn-group float-right">
+                      <!--<div class="btn-group float-right">
                         <button class="btn btn-transparent dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <svg class="c-icon">
                             <use xlink:href="/assets/admin/icons/coreui/free-symbol-defs.svg#cui-settings"></use>
                           </svg>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
-                      </div>
+                      </div>-->
                       <div class="text-value-lg">9.823</div>
-                      <div>Members online</div>
+                      <div>Members</div>
                     </div>
                     <div class="c-chart-wrapper mt-3 mx-3" style="height:70px;">
                       <canvas class="chart" id="card-chart1" height="70"></canvas>
@@ -28,13 +28,13 @@
                 <div class="col-sm-6 col-lg-3">
                   <div class="card text-white bg-info">
                     <div class="card-body pb-0">
-                      <button class="btn btn-transparent p-0 float-right" type="button">
+                      <!--<button class="btn btn-transparent p-0 float-right" type="button">
                         <svg class="c-icon">
                           <use xlink:href="/assets/admin/icons/coreui/free-symbol-defs.svg#cui-location-pin"></use>
                         </svg>
-                      </button>
+                      </button>-->
                       <div class="text-value-lg">9.823</div>
-                      <div>Members online</div>
+                      <div>Enterprises</div>
                     </div>
                     <div class="c-chart-wrapper mt-3 mx-3" style="height:70px;">
                       <canvas class="chart" id="card-chart2" height="70"></canvas>
@@ -45,16 +45,16 @@
                 <div class="col-sm-6 col-lg-3">
                   <div class="card text-white bg-warning">
                     <div class="card-body pb-0">
-                      <div class="btn-group float-right">
+                      <!--<div class="btn-group float-right">
                         <button class="btn btn-transparent dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <svg class="c-icon">
                             <use xlink:href="/assets/admin/icons/coreui/free-symbol-defs.svg#cui-settings"></use>
                           </svg>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
-                      </div>
+                      </div>-->
                       <div class="text-value-lg">9.823</div>
-                      <div>Members online</div>
+                      <div>Vendors</div>
                     </div>
                     <div class="c-chart-wrapper mt-3" style="height:70px;">
                       <canvas class="chart" id="card-chart3" height="70"></canvas>
@@ -65,16 +65,16 @@
                 <div class="col-sm-6 col-lg-3">
                   <div class="card text-white bg-danger">
                     <div class="card-body pb-0">
-                      <div class="btn-group float-right">
+                      <!--<div class="btn-group float-right">
                         <button class="btn btn-transparent dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <svg class="c-icon">
                             <use xlink:href="/assets/admin/icons/coreui/free-symbol-defs.svg#cui-settings"></use>
                           </svg>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
-                      </div>
+                      </div>-->
                       <div class="text-value-lg">9.823</div>
-                      <div>Members online</div>
+                      <div>Total Sales</div>
                     </div>
                     <div class="c-chart-wrapper mt-3 mx-3" style="height:70px;">
                       <canvas class="chart" id="card-chart4" height="70"></canvas>
@@ -84,14 +84,13 @@
                 <!-- /.col-->
               </div>
               <!-- /.row-->
-              <div class="card">
+              <!--<div class="card">
                 <div class="card-body">
                   <div class="row">
                     <div class="col-sm-5">
                       <h4 class="card-title mb-0">Traffic</h4>
                       <div class="small text-muted">September 2019</div>
                     </div>
-                    <!-- /.col-->
                     <div class="col-sm-7 d-none d-md-block">
                       <button class="btn btn-primary float-right" type="button">
                         <svg class="c-icon">
@@ -110,9 +109,7 @@
                         </label>
                       </div>
                     </div>
-                    <!-- /.col-->
                   </div>
-                  <!-- /.row-->
                   <div class="c-chart-wrapper" style="height:300px;margin-top:40px;">
                     <canvas class="chart" id="main-chart" height="300"></canvas>
                   </div>
@@ -151,9 +148,9 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div>-->
               <!-- /.card-->
-              <div class="row">
+              <!--<div class="row">
                 <div class="col-sm-6 col-lg-4">
                   <div class="card">
                     <div class="card-header bg-facebook content-center">
@@ -177,7 +174,6 @@
                     </div>
                   </div>
                 </div>
-                <!-- /.col-->
                 <div class="col-sm-6 col-lg-4">
                   <div class="card">
                     <div class="card-header bg-twitter content-center">
@@ -201,7 +197,6 @@
                     </div>
                   </div>
                 </div>
-                <!-- /.col-->
                 <div class="col-sm-6 col-lg-4">
                   <div class="card">
                     <div class="card-header bg-linkedin content-center">
@@ -225,10 +220,9 @@
                     </div>
                   </div>
                 </div>
-                <!-- /.col-->
-              </div>
+              </div>-->
               <!-- /.row-->
-              <div class="row">
+              <!--<div class="row">
                 <div class="col-md-12">
                   <div class="card">
                     <div class="card-header">Traffic & Sales</div>
@@ -241,15 +235,12 @@
                                 <div class="text-value-lg">9,123</div>
                               </div>
                             </div>
-                            <!-- /.col-->
                             <div class="col-6">
                               <div class="c-callout c-callout-danger"><small class="text-muted">Recuring Clients</small>
                                 <div class="text-value-lg">22,643</div>
                               </div>
                             </div>
-                            <!-- /.col-->
                           </div>
-                          <!-- /.row-->
                           <hr class="mt-0">
                           <div class="progress-group mb-4">
                             <div class="progress-group-prepend"><span class="progress-group-text">Monday</span></div>
@@ -329,7 +320,6 @@
                             </div>
                           </div>
                         </div>
-                        <!-- /.col-->
                         <div class="col-sm-6">
                           <div class="row">
                             <div class="col-6">
@@ -337,15 +327,12 @@
                                 <div class="text-value-lg">78,623</div>
                               </div>
                             </div>
-                            <!-- /.col-->
                             <div class="col-6">
                               <div class="c-callout c-callout-success"><small class="text-muted">Organic</small>
                                 <div class="text-value-lg">49,123</div>
                               </div>
                             </div>
-                            <!-- /.col-->
                           </div>
-                          <!-- /.row-->
                           <hr class="mt-0">
                           <div class="progress-group">
                             <div class="progress-group-header">
@@ -436,9 +423,8 @@
                             </div>
                           </div>
                         </div>
-                        <!-- /.col-->
                       </div>
-                      <!-- /.row--><br>
+                      <br>
                       <table class="table table-responsive-sm table-hover table-outline mb-0">
                         <thead class="thead-light">
                           <tr>
@@ -622,8 +608,7 @@
                     </div>
                   </div>
                 </div>
-                <!-- /.col-->
-              </div>
+              </div>-->
               <!-- /.row-->
             </div>
           </div>
