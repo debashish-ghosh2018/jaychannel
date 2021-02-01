@@ -27,10 +27,10 @@ Route::get('/course_details/{course_id?}', 'CourseController@course_details')->n
 
 Route::get('/member_dashboard', 'Buyer\DashboardController@index')->name('show_member_dashboard');
 Route::post('/add_card_details', 'Buyer\DashboardController@addCardDetails')->name('add_card_details');
-Route::get('/member_manage_classes', function () { return view('buyer.manage_classes'); })->name('show_member_classes');
+Route::get('/member_manage_classes', 'Buyer\DashboardController@memberManageClass')->name('show_member_classes');
 
 
-Route::get('/enterprise_dashboard', function () { return view('enterprise.dashboard'); })->name('show_enterprise_dashboard');
+Route::get('/enterprise_dashboard', 'Enterprise\DashboardController@enterpriseClasses')->name('show_enterprise_dashboard');
 Route::post('/add_enterprise_card_details', 'Enterprise\DashboardController@addEnterpriseCardDetails')->name('add_enterprise_card_details');
 Route::get('/enterprise_account', 'Enterprise\DashboardController@index')->name('show_enterprise_account');
 

@@ -170,6 +170,7 @@
                      <a onclick="signin()" class="nav-link dropbtn">Welcome ({{ Auth::user()->name }})</a>
                      <div id="loginDropdown" class="dropdown-content">
                         <a href="{{ route(Auth::user()->getUserAccountUrl()) }}">Manage Profile</a>
+						<a href="{{ route('view_cart') }}">View Cart</a>
                         <a href="{{ route('user_logout') }}">Sign Out</a>
                      </div>                      
                   @endauth                  

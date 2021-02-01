@@ -55,7 +55,7 @@
                         <label>Name </label>
                      </div>
                      <div class="col-lg-8 col-12">
-                        <input type="text" class="form-control custom-file float-right" id="" name="user_name" value="{{$you['name']}}">
+                        <input type="text" class="form-control custom-file float-right" id="" name="user_name" value="{{$checkUser?$checkUser['user_name']:$you['name']}}">
                         <label class="error">{{ $errors->first('user_name') }}</label>
                      </div>
                   </div>
@@ -66,7 +66,7 @@
                      </div>
                      <div class="col-lg-8 col-12">
                         <input type="text" class="form-control custom-file float-right" id="" name="address"
-                        value="{{$you['address']}}">
+                        value="{{$checkUser?$checkUser['address']:$you['address']}}">
                         <label class="error">{{ $errors->first('address') }}</label>
                      </div>
                   </div>
@@ -76,7 +76,7 @@
                         <label class="inline">Tel </label>
                      </div>
                      <div class="col-lg-8 col-12">
-                        <input type="text" class="form-control custom-file float-right" name="tel" id="" value="{{$you['tel']}}">
+                        <input type="text" class="form-control custom-file float-right" name="tel" id="" value="{{$checkUser?$checkUser['tel']:$you['tel']}}">
                         <label class="error">{{ $errors->first('tel') }}</label>
                      </div>
                   </div>
@@ -87,7 +87,7 @@
                      </div>
                      <div class="col-lg-8 col-12">
                         <input type="text" class="form-control custom-file float-right" name="email" id=""
-                        value="{{$you['email']}}">
+                        value="{{$checkUser?$checkUser['email']:$you['email']}}">
                         <label class="error">{{ $errors->first('email') }}</label>
                      </div>
                   </div>
@@ -97,7 +97,7 @@
                         <label class="inline">Credit </label> &nbsp;&nbsp;
                      </div>
                      <div class="col-sm-2 col-12 text-left">
-                        <input type="text" class="form-control custom-file float-right" name="credit_amount" id="" placeholder="2000">&nbsp;&nbsp;
+                        <input type="text" class="form-control custom-file float-right" name="credit_amount" id="" placeholder="2000" value="{{$checkUser?$checkUser['credit_amount']:''}}" >&nbsp;&nbsp;
                         <label class="error">{{ $errors->first('credit_amount') }}</label>
                      </div>
                      <div class="col-sm-1"></div>
@@ -109,7 +109,7 @@
                   <div class="row">
                      <div class="col-lg-6 col-sm-6 col-xs-6">
                         <label class="switch">
-                        <input type="checkbox" checked="checked" name="auto_refill" value="1">
+                        <input type="checkbox" checked="checked" name="auto_refill" value="{{$checkUser?$checkUser['auto_refill']:''}}">
                         <span class="slider round"> </span>
                         </label> &nbsp; Auto Refill &nbsp;&nbsp; Unused Credit &nbsp; 36
                         <label class="error">{{ $errors->first('auto_refill') }}</label>
@@ -126,14 +126,14 @@
                         </span>
                      </div>
                      <div class="col-lg-8 col-12">
-                        <input type="text" class="form-control custom-file mb-2" name="card_no" id="" placeholder="4155 3341 2298 9900">
+                        <input type="text" class="form-control custom-file mb-2" name="card_no" id="" placeholder="4155 3341 2298 9900"  value="{{$checkUser?$checkUser['card_no']:''}}">
                         <label class="error">{{ $errors->first('card_no') }}</label>
                         <div class="row">
                            <div class="col-lg-1 col-1">
                               <label for="" class="inline">Exp</label> &nbsp;
                            </div>
                            <div class="col-lg-3 col-3">
-                              <select class="form-control select inline" name="exp_from" id="sel1">
+                              <select class="form-control select inline" name="exp_from" id="sel1" value="{{$checkUser?$checkUser['exp_from']:''}}">
                                  <option>1</option>
                                  <option>2</option>
                                  <option>3</option>
@@ -142,7 +142,7 @@
                               <label class="error">{{ $errors->first('exp_from') }}</label>
                            </div>
                            <div class="col-lg-3 col-3">
-                              <select class="form-control select inline " name="exp_to" id="sel1">
+                              <select class="form-control select inline " name="exp_to" id="sel1" value="{{$checkUser?$checkUser['exp_to']:''}}">
                                  <option>25</option>
                                  <option>26</option>
                                  <option>27</option>
@@ -155,7 +155,7 @@
                               <label class="inline">CCV </label> 
                            </div>
                            <div class="col-lg-3 col-3">
-                              <input type="text" class="form-control custom-file inline" name="ccv_no" id="" placeholder="123">
+                              <input type="text" class="form-control custom-file inline" name="ccv_no" id="" placeholder="123" value="{{$checkUser?$checkUser['ccv_no']:''}}">
                               <label class="error">{{ $errors->first('ccv_no') }}</label>
                            </div>
                         </div>
@@ -175,8 +175,8 @@
                      </div>
                      <div class="col-sm-10" >
                         <input type="text" name="flightdeck_login" class="form-control custom-file float-right" id=""
-                           placeholder="Sue@sunnysideurbanmanor.com">
-                           <label class="error">{{ $errors->first('flightdeck_login') }}</label>
+                           placeholder="Sue@sunnysideurbanmanor.com"  value="{{$checkUser?$checkUser['flightdeck_login']:''}}">
+                           
                      </div>
                   </div>
                   <br>

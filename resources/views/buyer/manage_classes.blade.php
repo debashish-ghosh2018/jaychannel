@@ -15,7 +15,7 @@
    <div class="container ">
       <br>
       <br>
-      <h2 class="padding content-padding">Welcome back, Jack!</h2>
+      <h2 class="padding content-padding">Welcome back, {{$you['name']}}!</h2>
       <br>
       <div class="row d-flex ">
          <div class="col-lg-2 offset-lg-1 col-md-5 col-sm-5 " >
@@ -43,7 +43,7 @@
                   <div class="col-7 text-center">
                      <p><span class="blue">Enrolled classes</span> &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Wish List
                      </p>
-                     <h2 class="text-center">You've 36 credits</h2>
+                     <h2 class="text-center">You've  {{$creditsAvailable}} credits</h2>
                      <br>
                   </div>
                </div>
@@ -57,51 +57,14 @@
                      </tr>
                   </thead>
                   <tbody>
+                  @foreach($classBookedDetails as $class_details)
                      <tr>
-                        <td class="blue">0348876</td>
-                        <td class="blue">Disability Thrives</td>
-                        <td class="blue text-center">15</td>
+                     <td class="blue">{{ $class_details->course_id }}</td>
+                        <td class="blue">{{ $class_details->title }}</td>
+                        <td class="blue text-center">{{ $class_details->registered_participants }}</td>
+                   
                      </tr>
-                     <tr>
-                        <td>0348661</td>
-                        <td>Gardening Homes</td>
-                        <td class="text-center">12</td>
-                     </tr>
-                     <tr>
-                        <td>0348110</td>
-                        <td>Travelling in Time</td>
-                        <td class="text-center">10</td>
-                     </tr>
-                     <tr>
-                        <td>0348668</td>
-                        <td>Happy Hour with Dee</td>
-                        <td class="text-center">8</td>
-                     </tr>
-                     <tr>
-                        <td>0348222</td>
-                        <td>One World One Love</td>
-                        <td class="text-center">13</td>
-                     </tr>
-                     <tr>
-                        <td>0348441</td>
-                        <td>Tea Master in Ceremony</td>
-                        <td class="text-center">11</td>
-                     </tr>
-                     <tr>
-                        <td>0348752</td>
-                        <td>Zumba for Begineers</td>
-                        <td class="text-center">12</td>
-                     </tr>
-                     <tr>
-                        <td>0348757</td>
-                        <td>Mexcio Travel Fun</td>
-                        <td class="text-center">12</td>
-                     </tr>
-                     <tr>
-                        <td>0348300</td>
-                        <td>Music With A Chair</td>
-                        <td class="text-center">10</td>
-                     </tr>
+                     @endforeach
                   </tbody>
                </table>
             </div>
