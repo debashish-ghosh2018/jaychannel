@@ -10,9 +10,9 @@
                     <div class="card-header">
                       <i class="fa fa-align-justify"></i> {{ __('Edit') }}: {{ $credit->title }}</div>
                     <div class="card-body">
-                        <form method="POST" action="/admin/credits/{{ $credit->id }}" enctype="multipart/form-data" id="credits_id">
+                        <form method="POST" action="{{ route('credit_update') }}/{{ $credit->id }}" enctype="multipart/form-data" id="credits_id">
                             @csrf
-                            @method('PUT')
+                            <!-- @method('PUT') -->
                             <input type="hidden" id="credit_id" name="credit_id" value="{{ $credit->id }}" />
                             <div class="form-group row">
                                 <label>Title</label>

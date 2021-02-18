@@ -189,11 +189,14 @@
                   <br>
                <div class="row">
                   <div class="col-lg-4">
-                     &nbsp; &nbsp;&nbsp;
-                     <i style="font-size:24px;color: black;" class="fa">&#xf004;</i>
-                     <br>
-                     Wish List
-                     &nbsp;
+                    &nbsp; &nbsp;&nbsp;
+                    @auth                    
+                    <a href="#" onclick="add_item_to_user_wishlist({{ $course_data->id }});">
+                      <i style="font-size:24px;color: black;" class="fa">&#xf004;</i>
+                      <br>Wish List
+                    </a>
+                    @endauth
+                    &nbsp;
                   </div>
                   <div class="col-lg-4">
                      &nbsp; 
@@ -413,6 +416,23 @@
     $('#myCarousel .carousel-item img').on('click', function (e) {
         var src = $(e.target).attr('data-remote');
         if (src) $(this).ekkoLightbox();
-    });    
+    }); 
+
+    function add_item_to_user_wishlist(course_id) {
+      $.ajax({
+         method: "POST",
+         url: "{{ route('add_course_to_user_wishlist') }}",
+         data: { _token: "{{ csrf_token() }}", course_id: course_id },
+         dataType: 'json',
+      })
+      .done(function( msg ) {
+         console.log( "Data Saved: " + msg );
+         if(msg.message == 'success'){
+            alert("Item has been successfully added to your wishlist.");
+         }else{
+            alert('Item already exist to your wishlist.');
+         }
+      });
+    }    
 </script>
 @endsection

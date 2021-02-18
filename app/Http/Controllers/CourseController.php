@@ -10,7 +10,11 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\Courses;
 use App\Models\ContentTypes;
+use App\Models\UserCourseOrders;
 use App\Models\UserCourseOrderLists;
+use App\Models\UserClassCancellationHistorys;
+use App\Models\UserCredits;
+use App\Models\UserWishlists;
 
 
 class CourseController extends Controller
@@ -302,6 +306,122 @@ class CourseController extends Controller
         else{
             return redirect()->route('home');
         }
+    }
+
+    public function cancel_course(Request $request){
+
+        $user = Auth::user();
+        $postData = $request->all();
+        //dd($postData);
+
+        if(!empty($postData['course_id']) && !empty($postData['order_id']) && !empty($postData['current_participants']) && !empty($postData['select_participants'])){
+            $course_cancellation = new UserClassCancellationHistorys();
+            $course_cancellation->class_booking_id = $postData['order_id'];
+            $course_cancellation->course_id = $postData['course_id'];
+            $course_cancellation->user_id = $user->id;
+            $course_cancellation->current_participants = $postData['current_participants'];
+            $course_cancellation->cancel_participants = $postData['select_participants'];
+            $course_cancellation->save();
+
+
+            $courseOrderList = UserCourseOrderLists::where('class_booking_id', '=', $postData['order_id'])->where('course_id', '=', $postData['course_id'])->first();
+            $courseOrderList->canceled_participants += (int)$postData['select_participants'];
+            $courseOrderList->save();
+
+
+            $total_credit = $total_participants = $credit_return = $credit_require = 0;
+            $adjusted_participants = (int)($postData['current_participants'] - $postData['select_participants']);
+
+            $course = Courses::findOrFail($postData['course_id']); 
+            $course_order = UserCourseOrders::findOrFail($postData['order_id']); 
+
+            $credit_used = $course_order->credit_used;
+            if(((int)$adjusted_participants) > 0 && ((int)$adjusted_participants) < $course->class_size){
+                //$credit_cnt = 0;
+                $credit_cnt = 1;
+                $credit_require = $credit_cnt * $course->credits;              
+            }
+            elseif(((int)$adjusted_participants) == 0 && ((int)$adjusted_participants) < $course->class_size){
+                //$credit_cnt = 1;
+                $credit_cnt = ceil(((int)$postData['current_participants']) / $course->class_size);
+                $credit_require = $credit_cnt * $course->credits;               
+            }
+            else{
+                $credit_cnt = ceil(((int)$adjusted_participants) / $course->class_size);
+                $credit_require = $credit_cnt * $course->credits;                 
+            } 
+
+            if($credit_require > 0 && $credit_require < $credit_used){
+                $course_order->credit_returned += ($credit_used - $credit_require);
+                $course_order->save();
+
+                $userCredit = new UserCredits();
+                $userCredit->user_id = $user->id;                   
+                $userCredit->credit_purchased  = ($credit_used - $credit_require);
+                $userCredit->credit_return_id = $course_cancellation->id;                      
+                $userCredit->credit_return_date = date("Y-m-d H:i:s");
+                $userCredit->save();                
+            }
+            elseif($credit_require > 0 && $credit_require == $credit_used){
+                $course_order->credit_returned = $credit_used;
+                $course_order->save();
+
+                $userCredit = new UserCredits();
+                $userCredit->user_id = $user->id;                   
+                $userCredit->credit_purchased  = $credit_used;
+                $userCredit->credit_return_id = $course_cancellation->id;                      
+                $userCredit->credit_return_date = date("Y-m-d H:i:s");
+                $userCredit->save();                
+            }            
+
+            return response()->json(['message'=>'success']);       
+        }
+
+        return response()->json(['message'=>'failure']);
+    } 
+
+    public function add_course_to_user_wishlist(Request $request){
+        $user = Auth::user();
+        $postData = $request->all(); 
+        
+        if(!empty($postData['course_id'])){
+            $userWishList = UserWishlists::where('user_id', '=', $user->id)->where('course_id', '=', $postData['course_id'])->get();
+            //dd($userWishList);
+
+            if(count($userWishList) <= 0){
+                $userWishList = new UserWishlists();
+                $userWishList->user_id = $user->id;                   
+                $userWishList->course_id = $postData['course_id'];
+                $userWishList->wishlist_id = $this->generator(8);                      
+                $userWishList->save();
+
+                return response()->json(['message'=>'success']);
+            }
+            else{
+                return response()->json(['message'=>'failure']);
+            }
+        }       
+    }   
+
+    private function generator($lenth){
+
+        $number=array("A","B","C","D","E","F","G","H","I","J","K","L","N","M","O","P","Q","R","S","U","V","T","W","X","Y","Z","1","2","3","4","5","6","7","8","9","0");
+    
+        for($i=0; $i<$lenth; $i++)
+        {
+            $rand_value=rand(0,34);
+            $rand_number=$number["$rand_value"];
+        
+            if(empty($con))
+            { 
+            $con=$rand_number;
+            }
+            else
+            {
+            $con="$con"."$rand_number";}
+        }
+
+        return $con;
     }
 
     private function saveImageFile($uploadFile, $storage)

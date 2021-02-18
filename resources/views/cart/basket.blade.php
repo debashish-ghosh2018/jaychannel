@@ -94,7 +94,34 @@
                <i class='fa fa-angle-left'></i>
                </span> </button>
                <div class="menu">
+                  <?php
+                  foreach($courses as $course){
+                    $user_details = $course->OwnerInfo()->get();
+                  ?>
                   <div class="card item" style="height: auto;width:18rem;">
+                     <a href="{{ route('view_course_details') }}/{{ $course->id }}" target="blank"><img class="card-img-top" src="<?php echo config('app.url').'/storage/app/course_browser_image/'.$course->browser_image_2; ?>" alt="<?php echo $course->title; ?>"></a>
+                     <div class="card-body">
+                        <a href="{{ route('view_course_details') }}/{{ $course->id }}" target="blank"><h5 class="mb-2 slidertextspace"><?php echo $course->title; ?></h5></a>
+                        <h6 class="lightcolor mb-2"><?php echo $user_details[0]->enterprise_name; ?></h6>
+                        <h6 class="mb-2">
+                           <span class="checked">4.6</span> &nbsp;
+                           <span class="fa fa-star checked"></span>
+                           <span class="fa fa-star checked"></span>
+                           <span class="fa fa-star checked"></span>
+                           <span class="fa fa-star"></span>
+                           <span class="fa fa-star"></span> &nbsp;
+                           <span class="lightcolor">(24)</span>
+                        </h6>
+                        <h4 class=" mb-2" style="font-size: 14px;"><?php echo $course->credits; ?> Credits
+                           <!--<span class="lightcolor txtlinethrough"><a href="#"> $12.99</a></span>-->
+                        </h4>
+                        <a href="#" class="btn btnseller">Bestseller</a>
+                     </div>
+                  </div>
+                  <?php
+                  }
+                  ?>
+                  <!--<div class="card item" style="height: auto;width:18rem;">
                      <img class="card-img-top" src="{{ asset('assets/app/images/enterprisebg.PNG') }}" alt="Card image cap">
                      <div class="card-body">
                         <h5 class="mb-2 slidertextspace">2021 Complete Phython Bootcamp From Zero to
@@ -181,7 +208,7 @@
                         </h4>
                         <a href="#" class="btn btnseller">Bestseller</a>
                      </div>
-                  </div>
+                  </div>-->
                </div>
                <!-- <div class="paddles"> -->
                <button class="right-paddle paddle">
@@ -228,6 +255,87 @@
     }
   }
 </script>
+<script>
+    // duration of scroll animation
+    var scrollDuration = 300;
+
+    // paddles
+    var leftPaddle = document.getElementsByClassName('left-paddle');
+    var rightPaddle = document.getElementsByClassName('right-paddle');
+
+    // get items dimensions
+    var itemsLength = $('.item').length;
+    var itemSize = $('.item').outerWidth(true);
+
+    // get some relevant size for the paddle triggering point
+    var paddleMargin = 20;
+
+    // get wrapper width
+    var getMenuWrapperSize = function () {
+        return $('.menu-wrapper').outerWidth();
+    }
+    var menuWrapperSize = getMenuWrapperSize();
+    // the wrapper is responsive
+    $(window).on('resize', function () {
+        menuWrapperSize = getMenuWrapperSize();
+    });
+    // size of the visible part of the menu is equal as the wrapper size 
+    var menuVisibleSize = menuWrapperSize;
+
+    // get total width of all menu items
+    var getMenuSize = function () {
+        return itemsLength * itemSize;
+    };
+    var menuSize = getMenuSize();
+
+    // get how much of menu is invisible
+    var menuInvisibleSize = menuSize - menuWrapperSize;
+
+    // get how much have we scrolled to the left
+    var getMenuPosition = function () {
+        return $('.menu').scrollLeft();
+    };
+
+    // finally, what happens when we are actually scrolling the menu
+    $('.menu').on('scroll', function () {
+        // get how much of menu is invisible
+        menuInvisibleSize = menuSize - menuWrapperSize;
+
+        // get how much have we scrolled so far
+        var menuPosition = getMenuPosition();
+        var menuEndOffset = menuInvisibleSize - paddleMargin;
+
+        // show & hide the paddles 
+        // depending on scroll position
+        if (menuPosition <= paddleMargin) {
+            $(leftPaddle).addClass('hidden');
+            $(rightPaddle).removeClass('hidden');
+        } else if (menuPosition < menuEndOffset) {
+            // show both paddles in the middle
+            $(leftPaddle).removeClass('hidden');
+            $(rightPaddle).removeClass('hidden');
+        } else if (menuPosition >= menuEndOffset) {
+            $(leftPaddle).removeClass('hidden');
+            $(rightPaddle).addClass('hidden');
+        }
+
+        // print important values
+        $('#print-wrapper-size span').text(menuWrapperSize);
+        $('#print-menu-size span').text(menuSize);
+        $('#print-menu-invisible-size span').text(menuInvisibleSize);
+        $('#print-menu-position span').text(menuPosition);
+    });
+
+    // scroll to left
+    $(rightPaddle).on('click', function () {
+        $('.menu').animate({ scrollLeft: menuInvisibleSize }, scrollDuration);
+    });
+
+    // scroll to right
+    $(leftPaddle).on('click', function () {
+        $('.menu').animate({ scrollLeft: '0' }, scrollDuration);
+    });
+</script>
 @endsection
 
 @section('styles')
@@ -235,7 +343,7 @@
   .menu-wrapper {
     position: relative;
     max-width: 100%;
-    height: 322px;
+    height: max-content;
     /* height: 100px; */
     margin: 1em auto;
     /* border: 1px solid black; */
@@ -248,7 +356,7 @@
     /* height: 120px; */
     /* background: #f3f3f3; */
     box-sizing: border-box;
-    height: 340px;
+    height: 350px;
     white-space: nowrap;
     /* overflow-x: auto; */
     overflow-x: auto;
@@ -267,10 +375,10 @@
   .paddles {}
 
   .paddle {
-    position: absolute;
+    position: relative;
     top: 0;
     bottom: 0;
-    width: 3em;
+    width: 4em;
     background: none;
   }
   .left-paddle {

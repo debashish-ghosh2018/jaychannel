@@ -43,11 +43,7 @@ class MailController extends Controller
             'subject' => 'required|min:1|max:128',
             'content' => 'required|min:1',
         ]);
-        $template = new EmailTemplate();
-        $template->name = $request->input('name');
-        $template->subject = $request->input('subject');
-        $template->content = $request->input('content');
-        $template->save();
+        $name = $request->input('name');        $name = trim($name);        $template = new EmailTemplate();                $template->name = $name;        $template->subject = $request->input('subject');        $template->content = $request->input('content');        $template->email_key = str_replace(' ', '_', strtolower($name));                $template->save();
         $request->session()->flash('message', 'Successfully created Email Template');
         return redirect()->route('mail.index');
     }

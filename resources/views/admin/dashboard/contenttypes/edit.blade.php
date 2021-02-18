@@ -10,7 +10,7 @@
                     <div class="card-header">
                       <i class="fa fa-align-justify"></i> {{ __('Edit') }}: {{ $content_type->name }}</div>
                     <div class="card-body">
-                        <form method="POST" action="/admin/content_types/{{ $content_type->id }}">
+                        <form method="POST" action="{{ url('/admin/content_types') }}/{{ $content_type->id }}">
                             @csrf
                             @method('PUT')
 

@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Mail;
 use App\Http\Controllers\Controller;
+
 use App\Models\User;
 use App\Models\UserDetail;
+use App\Models\EmailTemplate;
+
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
@@ -93,21 +97,37 @@ class RegisterController extends Controller
                 if($status) {
                
                     $lastInsertId= $user->id;
-                    $userDetail =new UserDetail;
-                    $userDetail->user_id = $lastInsertId;
-                    $userDetail->service_offered_patient_monitoring=0;
-                    $userDetail->service_offered_home_health=0;
-                    $userDetail->service_offered_activities=0;
-                    $userDetail->service_offered_counselling=0;
-                    $userDetail->service_offered_support_group=0;
-                    $userDetail->service_offered_case_management=0;
-                    $userDetail->service_offered_food_nutrition=0;
-                    $userDetail->service_offered_memory_care=0;
-                    $userDetail->service_offered_vocational_help=0;
-                    $userDetail->membership_in_center=0;
-                    $userDetail->membership_virtual=0;
-                    $userDetail->membership_hybrid=0;
-                    $status = $userDetail->save();
+                    if(strtolower($request['user_type']) == 'vendor'){
+                        $userDetail =new UserDetail;
+                        $userDetail->user_id = $lastInsertId;
+                        $userDetail->service_offered_patient_monitoring=0;
+                        $userDetail->service_offered_home_health=0;
+                        $userDetail->service_offered_activities=0;
+                        $userDetail->service_offered_counselling=0;
+                        $userDetail->service_offered_support_group=0;
+                        $userDetail->service_offered_case_management=0;
+                        $userDetail->service_offered_food_nutrition=0;
+                        $userDetail->service_offered_memory_care=0;
+                        $userDetail->service_offered_vocational_help=0;
+                        $userDetail->membership_in_center=0;
+                        $userDetail->membership_virtual=0;
+                        $userDetail->membership_hybrid=0;
+                        $status = $userDetail->save();   
+                    }
+					
+                    $template = EmailTemplate::where('email_key', '=', 'user_registration')->get();
+                    if(!empty($template[0])){
+                        $template = $template[0];  
+                        $template->content = str_replace('<username>', $request['name'], $template->content);
+
+                        Mail::send([], [], function($message) use ($request, $template) {
+                            $message->to($request['email'], $request['name'])
+                                    ->subject($template->subject);
+                            $message->from('email2mkashif@gmail.com','Joychannel');
+                            $message->setBody($template->content,'text/html');                
+                        });
+                    }
+					
                     session()->flash('success_message', 'User added successfully!');
                     $this->guard()->login($user);
                     return redirect($this->redirectPath());

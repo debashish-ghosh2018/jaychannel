@@ -10,7 +10,7 @@
                     <div class="card-header">
                       <i class="fa fa-align-justify"></i> {{ __('Create Credit') }}</div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('credits.store') }}" enctype="multipart/form-data" id="credits_id">
+                        <form method="POST" action="{{ route('credit_save') }}" enctype="multipart/form-data" id="credits_id">
                             @csrf
                             <div class="form-group row">
                                 <label>Title</label>

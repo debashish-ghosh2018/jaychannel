@@ -16,7 +16,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
                       </div>-->
-                      <div class="text-value-lg">9.823</div>
+                      <div class="text-value-lg">{{ $members->count() }}</div>
                       <div>Members</div>
                     </div>
                     <div class="c-chart-wrapper mt-3 mx-3" style="height:70px;">
@@ -33,7 +33,7 @@
                           <use xlink:href="/assets/admin/icons/coreui/free-symbol-defs.svg#cui-location-pin"></use>
                         </svg>
                       </button>-->
-                      <div class="text-value-lg">9.823</div>
+                      <div class="text-value-lg">{{ $enterprises->count() }}</div>
                       <div>Enterprises</div>
                     </div>
                     <div class="c-chart-wrapper mt-3 mx-3" style="height:70px;">
@@ -53,7 +53,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
                       </div>-->
-                      <div class="text-value-lg">9.823</div>
+                      <div class="text-value-lg">{{ $vendors->count() }}</div>
                       <div>Vendors</div>
                     </div>
                     <div class="c-chart-wrapper mt-3" style="height:70px;">
@@ -73,7 +73,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
                       </div>-->
-                      <div class="text-value-lg">9.823</div>
+                      <div class="text-value-lg">${{ $total_sales }}</div>
                       <div>Total Sales</div>
                     </div>
                     <div class="c-chart-wrapper mt-3 mx-3" style="height:70px;">

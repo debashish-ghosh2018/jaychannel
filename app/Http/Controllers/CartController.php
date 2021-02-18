@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Cart;
+use Mail;
 //use Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -18,6 +19,7 @@ use App\Models\UserCourseOrderLists;
 use App\Models\UserCreditOrders;
 use App\Models\UserCreditOrderLists;
 use App\Models\UserCredits;
+use App\Models\EmailTemplate;
 
 class CartController extends Controller
 {
@@ -41,6 +43,9 @@ class CartController extends Controller
     {
         $user = Auth::user();
         //dd($user);
+
+        $courses = Courses::orderBy('created_at', 'desc')->inRandomOrder()->limit(6)->get();
+        //dd($course);        
 
         if(!empty($user)){
             $user_info = $user->myDetails()->get();
@@ -76,10 +81,10 @@ class CartController extends Controller
             }
 
             if($transaction_type == 'credit_purchase'){
-                return view('cart.basket', ['cart_content' => $cart_content_list, 'total_price' => $total_price, 'cartCount' => Cart::getContent()->count(), 'transaction_type' => $transaction_type, 'currency_symbol' => '$', 'total_unit' => '']);
+                return view('cart.basket', ['cart_content' => $cart_content_list, 'total_price' => $total_price, 'cartCount' => Cart::getContent()->count(), 'transaction_type' => $transaction_type, 'currency_symbol' => '$', 'total_unit' => '', 'courses' => $courses]);
             }
             else{
-                return view('cart.basket', ['cart_content' => $cart_content_list, 'total_price' => $total_price, 'cartCount' => Cart::getContent()->count(), 'transaction_type' => $transaction_type, 'currency_symbol' => '', 'total_unit' => 'Credit Points']);
+                return view('cart.basket', ['cart_content' => $cart_content_list, 'total_price' => $total_price, 'cartCount' => Cart::getContent()->count(), 'transaction_type' => $transaction_type, 'currency_symbol' => '', 'total_unit' => 'Credit Points', 'courses' => $courses]);
             }
         }
         else{
@@ -240,9 +245,6 @@ class CartController extends Controller
             $postData = $request->all();
             $order_id = uniqid();
             //dd($postData);
-			
-			$cart_contents = Cart::getContent();
-			//dd($cart_contents);
 
             if(!empty($postData['transaction_type']) && $postData['transaction_type'] == 'credit_purchase'){
                 $creditOrder = new UserCreditOrders();
@@ -311,12 +313,53 @@ class CartController extends Controller
                 if(!empty($courseOrder->id)){
                     $cart_contents = Cart::getContent();
                     foreach($cart_contents as $item){
+                        $mail_content = '';                        
+
                         $orderCourses = new UserCourseOrderLists();
                         $orderCourses->class_booking_id = $courseOrder->id;
                         $orderCourses->no_of_participants_per_class = $item->attributes['course_credit'];
                         $orderCourses->registered_participants = $item->attributes['quantity'];
                         $orderCourses->course_id = $item->attributes['course_id'];
                         $orderCourses->save();
+
+
+                        $course = Courses::find($item->attributes['course_id']);
+                        $user_details = $course->OwnerInfo()->get();
+
+                        $mail_content = 'Course Name:: '.$course->title.', Course Start Date:: '.$course->start_date.', Course End Date:: '.$course->end_date.', Course Booking Date:: '.date("d-M-Y").', Registered Participants:: '.$course->registered_participants.', Course Booking Id:: '.$order_id.', Total Credit Used:: '.$postData['fldCreditRequire'];
+
+
+                        // ================= Sending booking Email to vendor of the course =================
+                        $template = EmailTemplate::where('email_key', '=', 'vendor_course_booking_notification')->get();
+                        if(!empty($template[0])){
+                            $template = $template[0];
+                            Mail::send([], [], function($message) use ($request, $template, $user_details, $mail_content) {
+                                $message->to($user_details[0]->contact_person_email, $user_details[0]->contact_person_firstname)->subject($template->subject);
+                                $message->from('email2mkashif@gmail.com','Joychannel');
+
+                                $body = $template->content;
+                                $body = str_replace('<content>', $mail_content, $body);
+
+                                $message->setBody($body,'text/html');                
+                            });
+                        }
+
+
+                        // ================= Sending booking Email to Admin of the site =================
+                        $template = EmailTemplate::where('email_key', '=', 'admin_course_booking_notification')->get();
+                        if(!empty($template[0])){
+                            $template = $template[0];
+                            Mail::send([], [], function($message) use ($request, $template, $mail_content) {
+                                $message->to('email2mkashif@gmail.com', 'Administrator')->subject($template->subject);
+                                $message->from($request->input('fldEmail'),$request->input('fldName'));
+
+                                $body = $template->content;
+                                $body = str_replace('<content>', $mail_content, $body);
+
+                                $message->setBody($body,'text/html');                
+                            });
+                        }
+
                     }
 
                     $userCredit = new UserCredits();

@@ -58,6 +58,18 @@ Route::post('/add_to_cart', 'CartController@addToCart')->name('add_to_cart');
 Route::get('/view_cart', 'CartController@index')->name('view_cart');
 Route::post('/place_order', 'CartController@placeOrder')->name('place_order');
 
+Route::post('/search_course_by_title', 'HomeController@search_courses_by_description')->name('search_course_by_title');
+Route::get('/show_page/{content_key?}', 'HomeController@other_pages')->name('show_page');
+Route::post('/send_email_to_admin', 'HomeController@send_email_to_admin')->name('send_email_to_admin');
+Route::post('/cancel_course', 'CourseController@cancel_course')->name('cancel_course');
+Route::post('/add_course_to_user_wishlist', 'CourseController@add_course_to_user_wishlist')->name('add_course_to_user_wishlist');
+
+
+// ---- Test email routes ----
+Route::get('sendbasicemail','MailController@basic_email');
+Route::get('sendhtmlemail','MailController@html_email');
+Route::get('sendattachmentemail','MailController@attachment_email');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -89,14 +101,7 @@ Route::get('/logout', function(){
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')->namespace('Admin')->middleware(['get.menu'])->group(function() {    
-    Route::get('/', function () {
-        if (Auth::check()) {   // && Auth::user()->isAdmin()
-            return view('admin.dashboard.homepage'); 
-        }
-        else{
-            return view('admin.redirect_to_login'); 
-        }
-    });
+    Route::get('/', 'HomeController@index');
 
     Route::group(['middleware' => ['role:user']], function () {
         Route::get('/colors', function () {     return view('admin.dashboard.colors'); });
@@ -143,11 +148,28 @@ Route::prefix('admin')->namespace('Admin')->middleware(['get.menu'])->group(func
             Route::get('/modals', function(){   return view('admin.dashboard.notifications.modals'); });
         });
         Route::resource('notes', 'NotesController');
+        Route::resource('users', 'UsersController');
+        Route::resource('members', 'MembersController');	
+        Route::resource('enterprises', 'EnterprisesController');  
+        Route::resource('vendors', 'VendorsController'); 		
+        Route::resource('courses', 'CoursesController'); 
+		
+		
+        Route::resource('orders', 'OrdersController'); 
+        Route::get('show_orders/{id?}/{showdetails?}', 'OrdersController@show_order')->name('showOrders');        
+		
 		
         Route::resource('credits', 'CreditsController');
         Route::get('list_credits', 'CreditsController@index')->name('listCredits');
         Route::post('update_credit/{id?}', 'CreditsController@update_details')->name('credit_update');
         Route::post('save_credit', 'CreditsController@save_details')->name('credit_save'); 
+		
+		
+        Route::resource('banners', 'BannersController');
+        Route::get('list_banners', 'BannersController@index')->name('listBanners');
+        Route::post('update_banner/{id?}', 'BannersController@update_details')->name('banner_update');
+        Route::post('save_banner', 'BannersController@save_details')->name('banner_save');		
+		
 		
         Route::resource('subscribers', 'SubscribersController'); 
         Route::resource('content_types', 'ContentTypesController');                

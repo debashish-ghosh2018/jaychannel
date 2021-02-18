@@ -52,7 +52,7 @@ class CreditsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    /*public function store(Request $request)
     {
         $validatedData = $request->validate([
             'title'             => 'required|min:1|max:64',
@@ -93,7 +93,7 @@ class CreditsController extends Controller
 
         $request->session()->flash('message', 'Successfully created credit');
         return redirect()->route('credits.index');
-    }
+    }*/
 
     public function save_details(Request $request)
     {
@@ -124,6 +124,7 @@ class CreditsController extends Controller
         $user = auth()->user();
         $credit = new Credits();
         $credit->title = $postData['title'];
+        $credit->status = (int)$postData['status'];        
         $credit->content = $postData['content'];
         $credit->type = $postData['type'];
         $credit->cost_amount = $postData['cost_amount'];
@@ -172,7 +173,7 @@ class CreditsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    /*public function update(Request $request, $id)
     {
         //var_dump('bazinga');
         //die();
@@ -215,7 +216,7 @@ class CreditsController extends Controller
 
         $request->session()->flash('message', 'Successfully edited credit');
         return redirect()->route('credits.index');
-    }
+    }*/
 
     public function update_details(Request $request, $id)
     {
@@ -245,12 +246,16 @@ class CreditsController extends Controller
             $credit_logo_mime = '';
         }
 
-        if(!empty($postData['fld_image_existing']) && $postData['fld_image_existing'] != 'undefined'){
-            unlink(storage_path('app/'.SELF::STORAGE_CREDIT_HOMEPAGE_IMAGE.'/'.$postData['fld_image_existing']));
+        if(!empty($postData['fld_image_existing']) && $postData['fld_image_existing'] != 'undefined' && !empty($credit_logo_filename)){
+            $unlink_file_path = storage_path('app/'.SELF::STORAGE_CREDIT_HOMEPAGE_IMAGE.'/'.$postData['fld_image_existing']);
+            if(file_exists($unlink_file_path)){
+                unlink($unlink_file_path);
+            }
         }
 
         $credit = Credits::find($id);
         $credit->title = $postData['title'];
+        $credit->status = (int)$postData['status'];        
         $credit->content = $postData['content'];
         $credit->type = $postData['type'];
         $credit->cost_amount = $postData['cost_amount'];

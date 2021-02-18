@@ -10,12 +10,13 @@
       </div>
    </div>
 </section>
+
 <!--Some Feature -->
 <section id="our-feature" class="single-feature padding">
    <div class="container ">
       <br>
       <br>
-      <h2 class="padding content-padding">Welcome back, {{$you['name']}}!</h2>
+      <h2 class="padding content-padding">Welcome back, {{ $you['name'] }}!</h2>
       <br>
       <div class="row d-flex ">
          <div class="col-lg-2 offset-lg-1 col-md-5 col-sm-5 " >
@@ -25,136 +26,273 @@
             <br>
             <!-- <h4>leads</h4> <br> -->
             <h4>
-               <!-- <a href="finance.html">
-                  Finance
-                  
-                  </a> -->
+               <!-- <a href="finance.html">Finance</a> -->
             </h4>
             <br>
          </div>
          <div class="col-lg-9 col-md-7 col-sm-7 text-sm-left text-center " >
-            <div class="heading-title col-md-8 mb-3">
+            <div class="heading-title col-md-12 mb-7">
                <h4> &nbsp; &nbsp; <img src="{{ asset('assets/app/images/arrow.PNG') }}" alt="" width="25px" height="25px">&nbsp; &nbsp;
                   Classes Overview
                </h4>
                <br>
                <div class="row">
-                  <div class="col-2"></div>
-                  <div class="col-7 text-center">
-                     <p><span class="blue">Enrolled classes</span> &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Wish List
-                     </p>
+                  <!--<div class="col-2"></div>-->
+                  <div class="col-12 text-center">
                      <h2 class="text-center">You've  {{$creditsAvailable}} credits</h2>
                      <br>
-                  </div>
-               </div>
-               <br>
+                     <!-- <p><span class="blue">Enrolled classes</span> &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Wish List</p> -->
+
+                     <ul class="nav nav-tabs" id="myTab" role="tablist">
+                       <li class="nav-item">
+                         <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Enrolled classes</a>
+                       </li>
+                       <li class="nav-item">
+                         <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Wish List</a>
+                       </li>
+                     </ul>
+                     <div class="tab-content" id="myTabContent">
+                       <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+               <br/>
                <table class="table">
                   <thead>
                      <tr>
                         <th scope="col">Class No.</th>
                         <th scope="col">Class Name</th>
                         <th scope="col">Sign-Ups</th>
+                        <th scope="col">Credit Used</th>                        
+                        <th></th>
                      </tr>
                   </thead>
-                  <tbody>
-                  @foreach($classBookedDetails as $class_details)
-                     <tr>
-                     <td class="blue">{{ $class_details->course_id }}</td>
-                        <td class="blue">{{ $class_details->title }}</td>
-                        <td class="blue text-center">{{ $class_details->registered_participants }}</td>
-                   
-                     </tr>
-                     @endforeach
+                  <tbody>   
+                  <?php              
+                  foreach($classBookedDetails as $class_booked){
+
+                     $booked_courses = $class_booked->bookedCourses()->get();
+                     if(count($booked_courses) > 0){
+                        foreach($booked_courses as $course_booked){
+                           $course_details = $course_booked->Course()->get();
+                  ?>
+                  <tr>
+                     <td class="blue">{{ $class_booked->booking_no }}</td>
+                     <td class="blue">{{ $course_details[0]->title }}</td>
+                     <td class="blue text-center">{{ ($course_booked->registered_participants - $course_booked->canceled_participants) }}</td>
+                     <td class="blue text-center">{{ ($class_booked->credit_used - $class_booked->credit_returned) }}</td>
+                     <td class="blue text-center"><a href="#" onclick="return cancel_class_participants(<?php echo $course_booked->class_booking_id; ?>,<?php echo $course_booked->course_id; ?>,'<?php echo $class_booked->booking_no; ?>',<?php echo ($course_booked->registered_participants - $course_booked->canceled_participants); ?>);">Cancel</a></td>
+                  </tr>
+                  <?php
+                        }
+                     }
+                  }
+                  ?>
                   </tbody>
                </table>
-            </div>
-         </div>
-      </div>
-   </div>
-   <!--  -->
-   <div class="container padding_top " style="display: none;">
-      <div class="row d-flex ">
-         <div class="col-lg-2 offset-lg-1 col-md-5 col-sm-5 " >
-            <h4>Account</h4>
-            <br>
-            <h4>Manage <br> Classes</h4>
-            <br>
-            <h4><span class="blue">Finance</span></h4>
-            <br>
-         </div>
-         <div class="col-lg-9 col-md-7 col-sm-7 text-sm-left text-center " >
-            <div class="heading-title col-md-8 mb-3">
-               <h4> &nbsp; &nbsp; <img src="{{ asset('assets/app/images/arrow.PNG') }}" alt="" width="25px" height="25px">&nbsp; &nbsp; Finance
-               </h4>
-               <br>
-               <br>
-               <br>
+
+                       </div>
+                       <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
+               <br/>
                <table class="table">
                   <thead>
                      <tr>
-                        <th scope="col">Issue No.</th>
-                        <th scope="col">Month</th>
-                        <th scope="col">Income</th>
-                        <th scope="col">Deposit</th>
+                        <th scope="col">Course Name</th>
+                        <th scope="col">Vendor Name & Location</th>
+                        <th scope="col">Credit Require</th>                        
+                        <th></th>
                      </tr>
                   </thead>
-                  <tbody>
-                     <tr>
-                        <td class="blue">0348876</td>
-                        <td class="blue">Nov 2020 </td>
-                        <td class="blue">5,400</td>
-                        <td class="blue">Pending</td>
-                     </tr>
-                     <tr>
-                        <td>0348661</td>
-                        <td> Oct 2020</td>
-                        <td>6,880</td>
-                        <td>Done</td>
-                     </tr>
-                     <tr>
-                        <td>0348110</td>
-                        <td> Sep 2020</td>
-                        <td>8,990</td>
-                        <td>Done</td>
-                     </tr>
-                     <tr>
-                        <td>0348668</td>
-                        <td>Aug 2020</td>
-                        <td>10,765</td>
-                        <td>Done</td>
-                     </tr>
-                     <tr>
-                        <td>0348222</td>
-                        <td>July 2020</td>
-                        <td>6,995</td>
-                        <td>Done</td>
-                     </tr>
-                     <tr>
-                        <td>0348441</td>
-                        <td>June 2020</td>
-                        <td>8,890</td>
-                        <td>Done</td>
-                     </tr>
-                     <tr>
-                        <td>0348752</td>
-                        <td>May 2020</td>
-                        <td>12,770</td>
-                        <td>Done</td>
-                     </tr>
-                     <tr>
-                        <td>0348757</td>
-                        <td>Apr</td>
-                        <td>15,005</td>
-                        <td>Done</td>
-                     </tr>
+                  <tbody>   
+                  <?php              
+                  foreach($myWishlist as $item){
+                     $course_detail = $item->Course()->get();
+                     $user_details = $course_details[0]->OwnerInfo()->get();
+                  ?>
+                  <tr>
+                     <td class="blue"><a href="{{ route('view_course_details') }}/{{ $course_details[0]->id }}" target="blank">{{ $course_details[0]->title }}</a></td>
+                     <td class="text-center" style="color: black;">{{ $user_details[0]->enterprise_name }}, {{ $user_details[0]->location }}</td>
+                     <td class="text-center" style="color: black;">{{ $course_details[0]->credits }}</td>
+                  </tr>
+                  <?php
+                  }
+                  ?>
                   </tbody>
                </table>
+
+                       </div>
+                     </div>
+
+                  </div>
+               </div>
+               <!-- <br> -->
             </div>
          </div>
       </div>
    </div>
+   
+   <!-- <div class="container padding_top " style="display: none;">
+
+      <div class="row d-flex ">
+
+         <div class="col-lg-2 offset-lg-1 col-md-5 col-sm-5 " >
+
+            <h4>Account</h4>
+
+            <br>
+
+            <h4>Manage <br> Classes</h4>
+
+            <br>
+
+            <h4><span class="blue">Finance</span></h4>
+
+            <br>
+
+         </div>
+
+         <div class="col-lg-9 col-md-7 col-sm-7 text-sm-left text-center " >
+
+            <div class="heading-title col-md-8 mb-3">
+
+               <h4> &nbsp; &nbsp; <img src="{{ asset('assets/app/images/arrow.PNG') }}" alt="" width="25px" height="25px">&nbsp; &nbsp; Finance
+
+               </h4>
+
+               <br>
+
+               <br>
+
+               <br>
+
+               <table class="table">
+
+                  <thead>
+
+                     <tr>
+
+                        <th scope="col">Issue No.</th>
+
+                        <th scope="col">Month</th>
+
+                        <th scope="col">Income</th>
+
+                        <th scope="col">Deposit</th>
+
+                     </tr>
+
+                  </thead>
+
+                  <tbody>
+
+                     <tr>
+
+                        <td class="blue">0348876</td>
+
+                        <td class="blue">Nov 2020 </td>
+
+                        <td class="blue">5,400</td>
+
+                        <td class="blue">Pending</td>
+
+                     </tr>
+
+                     <tr>
+
+                        <td>0348661</td>
+
+                        <td> Oct 2020</td>
+
+                        <td>6,880</td>
+
+                        <td>Done</td>
+
+                     </tr>
+
+                     <tr>
+
+                        <td>0348110</td>
+
+                        <td> Sep 2020</td>
+
+                        <td>8,990</td>
+
+                        <td>Done</td>
+
+                     </tr>
+
+                     <tr>
+
+                        <td>0348668</td>
+
+                        <td>Aug 2020</td>
+
+                        <td>10,765</td>
+
+                        <td>Done</td>
+
+                     </tr>
+
+                     <tr>
+
+                        <td>0348222</td>
+
+                        <td>July 2020</td>
+
+                        <td>6,995</td>
+
+                        <td>Done</td>
+
+                     </tr>
+
+                     <tr>
+
+                        <td>0348441</td>
+
+                        <td>June 2020</td>
+
+                        <td>8,890</td>
+
+                        <td>Done</td>
+
+                     </tr>
+
+                     <tr>
+
+                        <td>0348752</td>
+
+                        <td>May 2020</td>
+
+                        <td>12,770</td>
+
+                        <td>Done</td>
+
+                     </tr>
+
+                     <tr>
+
+                        <td>0348757</td>
+
+                        <td>Apr</td>
+
+                        <td>15,005</td>
+
+                        <td>Done</td>
+
+                     </tr>
+
+                  </tbody>
+
+               </table>
+
+            </div>
+
+         </div>
+
+      </div>
+   </div> -->
 </section>
-<section>
+
+<!-- <section>
    <div class="container padding_top text-center">
       <h3>Hey EasterSeals Southern California,
          <br>
@@ -163,31 +301,58 @@
       <br><br>
       <h3>The Class No. is: <br> 0348876</h3>
    </div>
-</section>
+</section> -->
+
 <br>
 <br>
 <br>
 <br>
  <!-- end section -->
-@endsection
 
+ <!-- Modal -->
+<div class="modal fade" id="cancelClassParticipants" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Class Cancellation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>How many participants do you want to cancel for ?:&nbsp;&nbsp;
+          <select name="fldSelectParticipants" id="fldSelectParticipants">
+          </select>
+        </p>
+        <input type="hidden" name="fldClassId" id="fldClassId" value="" />
+        <input type="hidden" name="fldOrderId" id="fldOrderId" value="" />
+        <input type="hidden" name="fldCurentParticipants" id="fldCurentParticipants" value="" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="btnCloseWindow">Close</button>
+        <button type="button" class="btn btn-primary" id="btnSaveChanges">Save & Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+@endsection
 
 @section('scripts')
 <!-- <script src="{{ asset('assets/app/js/custom.js') }}"></script> -->
 <script>
-    /* When the user clicks on the button, 
-    toggle between hiding and showing the dropdown content */
+   /* When the user clicks on the button, 
+   toggle between hiding and showing the dropdown content */
 
-    function signin() {
+   function signin() {
       document.getElementById("loginDropdown").classList.toggle("show");
-    }
+   }
 
-    function myFunction() {
+   function myFunction() {
       document.getElementById("myDropdown").classList.toggle("show");
-    }
+   }
 
-    // Close the dropdown if the user clicks outside of it
-    window.onclick = function (event) {
+   // Close the dropdown if the user clicks outside of it
+   window.onclick = function (event) {
       if (!event.target.matches('.dropbtn')) {
         var dropdowns = document.getElementsByClassName("dropdown-content");
         var i;
@@ -198,6 +363,50 @@
           }
         }
       }
-    }
+   }
+
+   function cancel_class_participants(order_id, class_id, class_booking_no, current_participants){
+      var decision = confirm('Are you sure that you want to cancel the class of No. ' + class_booking_no + ' ?');
+
+      if(decision){
+         for(var index = 1; index <= current_participants; index++){
+            $('#fldSelectParticipants').append(new Option(index, index))
+         }
+         $('#fldClassId').val(class_id);
+         $('#fldOrderId').val(order_id);
+         $('#fldCurentParticipants').val(current_participants);
+
+         $('#cancelClassParticipants').modal('toggle');
+      }
+
+      return decision;
+   }
+
+   $( "#btnSaveChanges" ).click(function() {
+      $.ajax({
+         method: "POST",
+         url: "{{ route('cancel_course') }}",
+         data: { _token: "{{ csrf_token() }}", course_id: $('#fldClassId').val(), order_id: $('#fldOrderId').val(), current_participants: $('#fldCurentParticipants').val(), select_participants: $('#fldSelectParticipants').val() },
+         dataType: 'json',
+      })
+      .done(function( msg ) {
+         console.log( "Data Saved: " + msg );
+         if(msg.message == 'success'){
+            $('#cancelClassParticipants').modal('toggle');
+            location.reload(); 
+         }else{
+            alert('Invalid data provided. Cannot cancel registered class.');
+            location.reload(); 
+         }
+      });
+   });
 </script>
+@endsection
+
+@section('styles')
+<style>
+#myTab .active, #myTabContent .active {
+   background-color: transparent !important;
+}
+</style>
 @endsection

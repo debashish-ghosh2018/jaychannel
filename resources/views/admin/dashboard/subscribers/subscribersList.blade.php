@@ -20,6 +20,7 @@
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Email</th>
+                            <th>Date Of Subscribing</th>                            
                             <th></th>
                             <th></th>                            
                           </tr>
@@ -29,7 +30,8 @@
                             <tr>
                               <td><strong>{{ $subscriber->firstname }}</strong></td>
                               <td>{{ $subscriber->lastname }}</td>
-                              <td><strong>{{ $subscriber->email }}</strong></td>                             
+                              <td><strong>{{ $subscriber->email }}</strong></td>
+                              <td><?php echo date("d-m-Y H:i:s", strtotime($subscriber->created_at)); ?></td>                             
                               <td>
                                 <a href="{{ url('/admin/subscribers/' . $subscriber->id) }}" class="btn btn-block btn-primary">View</a>
                               </td>

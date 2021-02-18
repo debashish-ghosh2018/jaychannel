@@ -38,9 +38,10 @@
                   @endguest
 
                   @auth
-                     <a onclick="signin()" class="nav-link dropbtn">Welcome ({{ Auth::user()->name }})</a>
+                     <a onclick="signin()" class="nav-link dropbtn">
+                      Hey {{ Auth::user()->name }}!<br/><span style="font-size: 14px;">@if (Session::get('user_type') == 'Member') You've {{ Session::get('user_available_credits') }} Credits @elseif (Session::get('user_type') == 'Enterprise') You've {{ Session::get('user_available_credits') }} Credits @endif</span></a>
                      <div id="loginDropdown" class="dropdown-content">
-                        <a href="{{ route(Auth::user()->getUserAccountUrl()) }}">Manage Profile</a>
+                        <a href="{{ route(Auth::user()->getUserAccountUrl()) }}">Manage Dashboard</a>
                         <a href="{{ route('view_cart') }}">View Cart</a>
                         <a href="{{ route('user_logout') }}">Sign Out</a>
                      </div>                      
@@ -86,9 +87,10 @@
                   @endguest
 
                   @auth
-                     <a onclick="myFunction()" class="nav-link dropbtn">Welcome ({{ Auth::user()->name }})</a>
+                     <a onclick="myFunction()" class="nav-link dropbtn">
+                      Hey {{ Auth::user()->name }}!<br/><span style="font-size: 14px;">@if (Session::get('user_type') == 'Member') You've {{ Session::get('user_available_credits') }} Credits @elseif (Session::get('user_type') == 'Enterprise') You've {{ Session::get('user_available_credits') }} Credits @endif</span></a>
                      <div id="loginDropdown" class="dropdown-content">
-                          <a href="{{ route(Auth::user()->getUserAccountUrl()) }}">Manage Profile</a>
+                          <a href="{{ route(Auth::user()->getUserAccountUrl()) }}">Manage Dashboard</a>
                           <a href="{{ route('view_cart') }}">View Cart</a>
                           <a href="{{ route('user_logout') }}">Sign Out</a>
                      </div>                      
@@ -136,9 +138,9 @@
          </div>
          <div class="col-lg-6  col-md-5 col-sm-5 ">
             <div class="fadein">
-               <img src="{{ asset('assets/app/images/New/top1.jpg') }}" style="width:100%">
-               <img src="{{ asset('assets/app/images/New/shop1.jpg') }}" style="width:100%">
-               <img src="{{ asset('assets/app/images/New/tablet.jpg') }}" style="width:100%">
+              @foreach ($banners as $banner)
+              <img src="{{ config('app.url') }}/storage/app/banner_image/{{ $banner->banner_image }}" style="width:100%">
+              @endforeach
             </div>
          </div>
       </div>
@@ -286,8 +288,12 @@
             <h4 class="inline"> &nbsp; <img src="{{ asset('assets/app/images/arrow.PNG') }}" alt="">&nbsp;&nbsp; Shop for Virtual
                Classes&nbsp;&nbsp; 
             </h4>
-            <h4 class="inline lightcolor padd8">&nbsp;<img src="{{ asset('assets/app/images/explore.png') }}" alt=""> &nbsp;&nbsp; what
-               kind of classes are you looking for?
+            <h4 class="inline lightcolor padd8" style="width: 70%;">
+              &nbsp;<img src="{{ asset('assets/app/images/explore.png') }}" alt=""> 
+              <form method="POST" name="frmSearch" id="frmSearch" action="{{ route('search_course_by_title') }}" style="padding: 0;margin: 0;display: initial;">
+              @csrf
+              &nbsp;&nbsp; <input type="text" name="fldSearch" placeholder="what kind of classes are you looking for?" style="width: 90%; border: none;" />
+              </form>
             </h4>
             <hr>
          </div>
@@ -343,7 +349,7 @@
          <?php
          $course_listing = '';
          foreach($courses as $course){
-            $user_details = $course->Owner()->get();
+            $user_details = $course->OwnerInfo()->get();
 
             $course_listing .= '<div class="cbp-item brand design graphics arts">
                <div class="services-main">
@@ -1154,17 +1160,17 @@
                            width="40px">&nbsp;<span>&nbsp;
                            Message Us</span>
                         </div>
-                        <form action="action_page.php">
+                        <form name="frmContactUs" name="frmContactUs">
                            <label for="fname">First Name</label><br>
-                           <input type="text" id="fname" name="firstname"><br>
+                           <input type="text" id="fldfirstname" name="fldfirstname" required /><br>
                            <label for="lname">Last Name</label><br>
-                           <input type="text" id="lname" name="lastname"><br>
+                           <input type="text" id="fldlastname" name="fldlastname" required /><br>
                            <label for="email">Email</label><br>
-                           <input type="email" id="email" name="email"><br>
+                           <input type="email" id="fldemail" name="fldemail" required /><br>
                            <label for="subject">Message</label><br>
-                           <textarea id="subject" name="subject"
-                              style="height:100px; width: 250px;"></textarea><br>
-                           <button class="btn btn-primary">Submit</button>
+                           <textarea id="fldsubject" name="fldsubject" style="height:100px; width: 250px; margin-bottom: 5px;" required></textarea>
+                           <br>
+                           <button class="btn btn-primary" type="button" onclick="btnsubmit2()">Submit</button>
                         </form>
                      </div>
                   </div>
@@ -1184,11 +1190,11 @@
             </p>
          </div>
          <div class="col-md-6 text-center ">
-            <p class="m-0 py-3"> <a href="javascript:void(0)" class="hover-default">Privacy Policy</a> &nbsp; |
+            <p class="m-0 py-3"> <a href="{{ route('show_page') }}/privacy_policy" class="hover-default">Privacy Policy</a> &nbsp; |
                &nbsp;
-               <a href="javascript:void(0)" class="hover-default"> Terms</a>&nbsp; | &nbsp;
-               <a href="javascript:void(0)" class="hover-default"> Accessibility</a>&nbsp; | &nbsp;
-               <a href="javascript:void(0)" class="hover-default"> Cookie Policy</a>
+               <a href="{{ route('show_page') }}/terms_coditions" class="hover-default"> Terms</a>&nbsp; | &nbsp;
+               <a href="{{ route('show_page') }}/accessibility" class="hover-default"> Accessibility</a>&nbsp; | &nbsp;
+               <a href="{{ route('show_page') }}/cookie_policy" class="hover-default"> Cookie Policy</a>
             </p>
          </div>
       </div>
@@ -1251,6 +1257,12 @@
 
       search_nearby_vendor('');
    });
+
+    $('#frmSearch').keypress((e) => { 
+      if (e.which === 13) { 
+          $('#frmSearch').submit(); 
+      } 
+    })  
 
   $('.minus').click(function() {
     var cartQty = $('#cartQuantity').val();
@@ -1363,19 +1375,39 @@ function btnsubmit(){
    var Idwayswecareform = document.getElementById('Idwayswecareform')
    var Idgreatchoice = document.getElementById('Idgreatchoice');
 
-   $.ajax({
-      method: "POST",
-      url: "{{ route('save_subscriber') }}",
-      data: { _token: "{{ csrf_token() }}", firstname: $("#fldSubscribeFirstname").val(), lastname: $("#fldSubscribeLastname").val(), email: $("#fldSubscribeEmail").val() }
-   })
-   .done(function( msg ) {
-      console.log( "Data Saved: " + msg );
-      if(Idwayswecare.style.display == 'block' && Idwayswecareform.style.display == 'block'){
-         Idwayswecare.style.display = 'none';
-         Idwayswecareform.style.display = 'none'
-         Idgreatchoice.style.display ='block'
-      }            
-   });        
-}    
+   if($("#fldSubscribeFirstname").val() != '' && $("#fldSubscribeLastname").val() != '' && $("#fldSubscribeEmail").val() != ''){
+      $.ajax({
+         method: "POST",
+         url: "{{ route('save_subscriber') }}",
+         data: { _token: "{{ csrf_token() }}", firstname: $("#fldSubscribeFirstname").val(), lastname: $("#fldSubscribeLastname").val(), email: $("#fldSubscribeEmail").val() }
+      })
+      .done(function( msg ) {
+         console.log( "Data Saved: " + msg );
+         if(Idwayswecare.style.display == 'block' && Idwayswecareform.style.display == 'block'){
+            Idwayswecare.style.display = 'none';
+            Idwayswecareform.style.display = 'none'
+            Idgreatchoice.style.display ='block'
+         }            
+      });
+   }else{
+      alert('Please enter require details for subscribing yourself.');
+   }    
+}   
+
+function btnsubmit2(){
+   if($("#fldfirstname").val() != '' && $("#fldlastname").val() != '' && $("#fldemail").val() != '' && $("#fldsubject").val() != ''){
+      $.ajax({
+         method: "POST",
+         url: "{{ route('send_email_to_admin') }}",
+         data: { _token: "{{ csrf_token() }}", firstname: $("#fldfirstname").val(), lastname: $("#fldlastname").val(), email: $("#fldemail").val(), message: $("#fldsubject").val() }
+      })
+      .done(function( msg ) {
+        console.log( "Return message: " + msg );
+        alert('Your enquiry has been send to site Admin. Admin will get back to you on this.');   
+      });
+   }else{
+      alert('Please enter all require details for contacting us.');
+   }    
+} 
 </script>
 @endsection

@@ -12,7 +12,13 @@
          <div class="col-md-12 col-sm-12 ">
             <hr>
             <h4 class="inline"> &nbsp; <img src="{{ asset('assets/app/images/arrow.PNG') }}" alt="">&nbsp;&nbsp; Shop for Virtual Classes&nbsp;&nbsp;  </h4>
-            <h4 class="inline lightcolor padd8">&nbsp;<img src="{{ asset('assets/app/images/explore.png') }}" alt="" > &nbsp;&nbsp; what kind of classes are you looking for?</h4>
+            <h4 class="inline lightcolor padd8" style="width: 70%;">
+               &nbsp;<img src="{{ asset('assets/app/images/explore.png') }}" alt="" >
+               <form method="POST" name="frmSearch" id="frmSearch" action="{{ route('search_course_by_title') }}" style="padding: 0;margin: 0;display: initial;">
+               @csrf
+               &nbsp;&nbsp; <input type="text" name="fldSearch" placeholder="what kind of classes are you looking for?" style="width: 90%; border: none;" />
+               </form>
+            </h4>
             <hr>
          </div>
       </div>
@@ -524,6 +530,12 @@
 
       //search_nearby_vendor('');
    });
+
+    $('#frmSearch').keypress((e) => { 
+      if (e.which === 13) { 
+          $('#frmSearch').submit(); 
+      } 
+    }); 
 
     function signin() {
       document.getElementById("loginDropdown").classList.toggle("show");

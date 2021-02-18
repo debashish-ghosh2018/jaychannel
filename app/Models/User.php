@@ -38,7 +38,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'address', 'tel', 'user_type',
+        'name', 'email', 'password', 'address', 'city', 'state', 'zipcode', 'tel', 'user_type',
     ];
 
     /**
@@ -107,5 +107,17 @@ class User extends Authenticatable
 
     public function myCourses(){
         return $this->hasMany('App\Models\Courses', 'user_id');
-    }                     
+    } 
+
+    public function myCredits(){
+        return $this->hasMany('App\Models\UserCredits', 'user_id');
+    } 
+
+    public function myCourseOrdered(){
+        return $this->hasMany('App\Models\UserCourseOrders', 'user_id');
+    } 
+
+    public function myWishlist(){
+        return $this->hasMany('App\Models\UserWishlists', 'user_id');
+    } 
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Storage;
+use Mail;
 use Illuminate\Http\Request;
 
 use App\Models\UserInfo;
@@ -13,6 +14,8 @@ use App\Models\Credits;
 use App\Models\Notes;
 use App\Models\UserCourseOrders;
 use App\Models\UserCourseOrderLists;
+use App\Models\EmailTemplate;
+use App\Models\Banners;
 
 
 class HomeController extends Controller
@@ -38,7 +41,10 @@ class HomeController extends Controller
     public function index()
     {
         $content_types = ContentTypes::ALL();
-        //dd($content_types);        
+        //dd($content_types); 
+
+        $banners = Banners::ALL();
+        //dd($banners);		
 
         $courses = Courses::orderBy('created_at', 'desc')->inRandomOrder()->limit(6)->get();
         //dd($course);
@@ -58,7 +64,45 @@ class HomeController extends Controller
 
         //dd($way_we_care);       
 
-		return view('home', ['courses' => $courses, 'content_types' => $content_types, 'credits' => $credits, 'way_we_care' => $way_we_care, 'how_it_work' => $how_it_work]);
+		return view('home', ['courses' => $courses, 'banners' => $banners, 'content_types' => $content_types, 'credits' => $credits, 'way_we_care' => $way_we_care, 'how_it_work' => $how_it_work]);
+    }
+
+    /**
+     * Send email message to admin.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function send_email_to_admin(Request $request)
+    {
+
+        $template = EmailTemplate::where('email_key', '=', 'contact_us')->get();
+        if(!empty($template[0])){
+            $template = $template[0];
+            Mail::send([], [], function($message) use ($request, $template) {
+                $message->to('email2mkashif@gmail.com', 'Administrator')->subject($template->subject);
+				//$message->to('ws.debashish@gmail.com', 'Administrator')->subject($template->subject);
+                $message->from('email2mkashif@gmail.com','Joychannel');
+
+                $body = $template->content;
+                $content = "<b>Name:</b>&nbsp;" . $request->input('firstname') . ' ' . $request->input('lastname') . '<br/><b>Email:</b>&nbsp;' . $request->input('email') . '<br/><b>Enquiry:</b>&nbsp;' . $request->input('message');
+                $body = str_replace('<content>', $content, $body);
+                
+                $message->setBody($body,'text/html');                
+            });
+        }
+
+        echo "success";
+    }
+
+    public function other_pages($content_key, Request $request){
+
+        $page_content = Notes::where('note_type', '=', $content_key)->get(); 
+        if(!empty($page_content[0])){
+            $page_content = $page_content[0];
+        }
+
+        return view('other_pages', ['page_content' => $page_content]);  
     }
 
     public function our_services($content_type = null, Request $request){
@@ -75,6 +119,24 @@ class HomeController extends Controller
 
         return view('ourservices', ['courses' => $courses, 'content_types' => $content_types]);  
     }
+	
+    public function search_courses_by_description(Request $request){
+        
+        $content_types = ContentTypes::ALL();
+        //dd($content_types); 
+
+        $postData = $request->all();
+        //dd($postData);
+        
+        if(!empty($postData['fldSearch'])){
+            $courses = Courses::where('title', 'like', '%' . $postData['fldSearch'] . '%')->orWhere('about_class', 'like', '%' . $postData['fldSearch'] . '%')->orderBy('created_at', 'desc')->inRandomOrder()->paginate( 20 );
+            return view('ourservices', ['courses' => $courses, 'content_types' => $content_types]);
+        }else{
+            return redirect()->route('our_services_view_all');       
+        }
+
+        
+    }	
 
     public function member_signin()
     {
@@ -133,39 +195,68 @@ class HomeController extends Controller
                             'user_type' => $user->user_type,
                         );
 
+            $session_data = session('postData');
+
+            if(empty($session_data['fld_business_type'])){ $session_data['fld_business_type'] = ''; }
+            if(empty($session_data['fld_business_location'])){ $session_data['fld_business_location'] = ''; }
+            if(empty($session_data['fld_business_address_zipcode'])){ $session_data['fld_business_address_zipcode'] = ''; }
+            if(empty($session_data['fld_client_size'])){ $session_data['fld_client_size'] = ''; }
+            if(empty($session_data['fld_staff_size'])){ $session_data['fld_staff_size'] = ''; }
+            if(empty($session_data['fld_business_timezone'])){ $session_data['fld_business_timezone'] = ''; }
+            if(empty($session_data['fld_website'])){ $session_data['fld_website'] = ''; }
+            if(empty($session_data['fld_about_your_enterprise'])){ $session_data['fld_about_your_enterprise'] = ''; }
+            if(empty($session_data['fld_area_of_service'])){ $session_data['fld_area_of_service'] = ''; }
+            if(empty($session_data['fld_service_offered_patient_monitoring'])){ $session_data['fld_service_offered_patient_monitoring'] = ''; }
+            if(empty($session_data['fld_service_offered_home_health'])){ $session_data['fld_service_offered_home_health'] = ''; }
+            if(empty($session_data['fld_service_offered_activities'])){ $session_data['fld_service_offered_activities'] = ''; }
+            if(empty($session_data['fld_service_offered_counselling'])){ $session_data['fld_service_offered_counselling'] = ''; }
+            if(empty($session_data['fld_service_offered_support_group'])){ $session_data['fld_service_offered_support_group'] = ''; }
+            if(empty($session_data['fld_service_offered_case_management'])){ $session_data['fld_service_offered_case_management'] = ''; }
+            if(empty($session_data['fld_service_offered_food_nutrition'])){ $session_data['fld_service_offered_food_nutrition'] = ''; }
+            if(empty($session_data['fld_service_offered_memory_care'])){ $session_data['fld_service_offered_memory_care'] = ''; }
+            if(empty($session_data['fld_service_offered_vocational_help'])){ $session_data['fld_service_offered_vocational_help'] = ''; }
+            if(empty($session_data['fld_membership_in_center'])){ $session_data['fld_membership_in_center'] = ''; }
+            if(empty($session_data['fld_membership_virtual'])){ $session_data['fld_membership_virtual'] = ''; }
+            if(empty($session_data['fld_membership_hybrid'])){ $session_data['fld_membership_hybrid'] = ''; }
+            if(empty($session_data['fld_contact_person_firstname'])){ $session_data['fld_contact_person_firstname'] = ''; }
+            if(empty($session_data['fld_contact_person_lastname'])){ $session_data['fld_contact_person_lastname'] = ''; }
+            if(empty($session_data['fld_contact_person_position'])){ $session_data['fld_contact_person_position'] = ''; }
+            if(empty($session_data['fld_contact_person_direct_line'])){ $session_data['fld_contact_person_direct_line'] = ''; }
+
+
             $user_info = array(
                             'fld_enterprise_name' => ((empty($user_details->enterprise_name))?$user->name:$user_details->enterprise_name),
-                            'fld_business_type' => ((empty($user_details->business_type))?'':$user_details->business_type),
+                            'fld_business_type' => ((empty($user_details->business_type))?$session_data['fld_business_type']:$user_details->business_type),
                             'fld_business_address' => ((empty($user_details->business_address))?$user->address:$user_details->business_address),
-                            'fld_business_location' => ((empty($user_details->location))?'':$user_details->location),
-                            'fld_business_address_zipcode' => ((empty($user_details->business_address_zipcode))?'':$user_details->business_address_zipcode),
-                            'fld_client_size' => ((empty($user_details->client_size))?'':$user_details->client_size),
-                            'fld_staff_size' => ((empty($user_details->staff_size))?'':$user_details->staff_size),
+                            'fld_business_location' => ((empty($user_details->location))?$session_data['fld_business_location']:$user_details->location),
+                            'fld_business_address_zipcode' => ((empty($user_details->business_address_zipcode))?$session_data['fld_business_address_zipcode']:$user_details->business_address_zipcode),
+                            'fld_client_size' => ((empty($user_details->client_size))?$session_data['fld_client_size']:$user_details->client_size),
+                            'fld_staff_size' => ((empty($user_details->staff_size))?$session_data['fld_staff_size']:$user_details->staff_size),
                             'fld_tel' => ((empty($user->tel))?'':$user->tel),
-                            'fld_business_timezone' => ((empty($user_details->business_timezone))?'':$user_details->business_timezone),
+                            'fld_business_timezone' => ((empty($user_details->business_timezone))?$session_data['fld_business_timezone']:$user_details->business_timezone),
                             'fld_business_email_for_inquiry' => ((empty($user_details->business_email_for_inquiry))?$user->email:$user_details->business_email_for_inquiry),
-                            'fld_website' => ((empty($user_details->website))?'':$user_details->website),
-                            'fld_about_your_enterprise' => ((empty($user_details->about_your_enterprise))?'':$user_details->about_your_enterprise),
-                            'fld_area_of_service' => ((empty($user_details->area_of_service))?'':$user_details->area_of_service),
-                            'fld_service_offered_patient_monitoring' => ((empty($user_details->service_offered_patient_monitoring))?'':$user_details->service_offered_patient_monitoring),
-                            'fld_service_offered_home_health' => ((empty($user_details->service_offered_home_health))?'':$user_details->service_offered_home_health),
-                            'fld_service_offered_activities' => ((empty($user_details->service_offered_activities))?'':$user_details->service_offered_activities),
-                            'fld_service_offered_counselling' => ((empty($user_details->service_offered_counselling))?'':$user_details->service_offered_counselling),
-                            'fld_service_offered_support_group' => ((empty($user_details->service_offered_support_group))?'':$user_details->service_offered_support_group),
-                            'fld_service_offered_case_management' => ((empty($user_details->service_offered_case_management))?'':$user_details->service_offered_case_management),
-                            'fld_service_offered_food_nutrition' => ((empty($user_details->service_offered_food_nutrition))?'':$user_details->service_offered_food_nutrition),
-                            'fld_service_offered_memory_care' => ((empty($user_details->service_offered_memory_care))?'':$user_details->service_offered_memory_care),
-                            'fld_service_offered_vocational_help' => ((empty($user_details->service_offered_vocational_help))?'':$user_details->service_offered_vocational_help),
-                            'fld_membership_in_center' => ((empty($user_details->membership_in_center))?'':$user_details->membership_in_center),
-                            'fld_membership_virtual' => ((empty($user_details->membership_virtual))?'':$user_details->membership_virtual),
-                            'fld_membership_hybrid' => ((empty($user_details->membership_hybrid))?'':$user_details->membership_hybrid),
+                            'fld_website' => ((empty($user_details->website))?$session_data['fld_website']:$user_details->website),
+                            'fld_about_your_enterprise' => ((empty($user_details->about_your_enterprise))?$session_data['fld_about_your_enterprise']:$user_details->about_your_enterprise),
+                            'fld_area_of_service' => ((empty($user_details->area_of_service))?$session_data['fld_area_of_service']:$user_details->area_of_service),
+                            'fld_service_offered_patient_monitoring' => ((empty($user_details->service_offered_patient_monitoring))?$session_data['fld_service_offered_patient_monitoring']:$user_details->service_offered_patient_monitoring),
+                            'fld_service_offered_home_health' => ((empty($user_details->service_offered_home_health))?$session_data['fld_service_offered_home_health']:$user_details->service_offered_home_health),
+                            'fld_service_offered_activities' => ((empty($user_details->service_offered_activities))?$session_data['fld_service_offered_activities']:$user_details->service_offered_activities),
+                            'fld_service_offered_counselling' => ((empty($user_details->service_offered_counselling))?$session_data['fld_service_offered_counselling']:$user_details->service_offered_counselling),
+                            'fld_service_offered_support_group' => ((empty($user_details->service_offered_support_group))?$session_data['fld_service_offered_support_group']:$user_details->service_offered_support_group),
+                            'fld_service_offered_case_management' => ((empty($user_details->service_offered_case_management))?$session_data['fld_service_offered_case_management']:$user_details->service_offered_case_management),
+                            'fld_service_offered_food_nutrition' => ((empty($user_details->service_offered_food_nutrition))?$session_data['fld_service_offered_food_nutrition']:$user_details->service_offered_food_nutrition),
+                            'fld_service_offered_memory_care' => ((empty($user_details->service_offered_memory_care))?$session_data['fld_service_offered_memory_care']:$user_details->service_offered_memory_care),
+                            'fld_service_offered_vocational_help' => ((empty($user_details->service_offered_vocational_help))?$session_data['fld_service_offered_vocational_help']:$user_details->service_offered_vocational_help),
+                            'fld_membership_in_center' => ((empty($user_details->membership_in_center))?$session_data['fld_membership_in_center']:$user_details->membership_in_center),
+                            'fld_membership_virtual' => ((empty($user_details->membership_virtual))?$session_data['fld_membership_virtual']:$user_details->membership_virtual),
+                            'fld_membership_hybrid' => ((empty($user_details->membership_hybrid))?$session_data['fld_membership_hybrid']:$user_details->membership_hybrid),
                             'fld_logo' => ((empty($user_details->logo))?'':'/storage/app/'.$user->get_vendor_logo_upload_path().'/'.$user_details->logo),
-                            'fld_contact_person_firstname' => ((empty($user_details->contact_person_firstname))?'':$user_details->contact_person_firstname),
-                            'fld_contact_person_lastname' => ((empty($user_details->contact_person_lastname))?'':$user_details->contact_person_lastname),
-                            'fld_contact_person_position' => ((empty($user_details->contact_person_position))?'':$user_details->contact_person_position),
-                            'fld_contact_person_direct_line' => ((empty($user_details->contact_person_direct_line))?'':$user_details->contact_person_direct_line),
-                            'fld_contact_person_email' => ((empty($user_details->contact_person_email))?'':$user_details->contact_person_email),
-                        );           
+                            'fld_contact_person_firstname' => ((empty($user_details->contact_person_firstname))?$session_data['fld_contact_person_firstname']:$user_details->contact_person_firstname),
+                            'fld_contact_person_lastname' => ((empty($user_details->contact_person_lastname))?$session_data['fld_contact_person_lastname']:$user_details->contact_person_lastname),
+                            'fld_contact_person_position' => ((empty($user_details->contact_person_position))?$session_data['fld_contact_person_position']:$user_details->contact_person_position),
+                            'fld_contact_person_direct_line' => ((empty($user_details->contact_person_direct_line))?$session_data['fld_contact_person_direct_line']:$user_details->contact_person_direct_line),
+                            'fld_contact_person_email' => ((empty($user_details->contact_person_email))?$session_data['fld_contact_person_email']:$user_details->contact_person_email),
+                        );            
 
             return view('vendor.dashboard', ['user_data' => $user_data, 'user_info' => $user_info]);
         }
@@ -178,7 +269,8 @@ class HomeController extends Controller
     {
         $user = Auth::user();      
 
-        $validatedData = $request->validate([
+        $postData = $request->all();
+        $validator = Validator::make($request->all(), [
             'fld_enterprise_name' => 'required|min:1|max:200',
             'fld_business_type' => 'required',
             'fld_business_address' => 'required|max:100',
@@ -194,65 +286,71 @@ class HomeController extends Controller
             'fld_contact_person_position' => 'required',
             'fld_contact_person_direct_line' => 'required|numeric',
             'fld_contact_person_email' => 'required|email'
-        ]);
-        $postData = $request->all();
+        ]);        
 
-        // add vendor logo
-        if (isset($postData['fld_logo'])) {
-            $fileMeta = $this->saveImageFile($postData['fld_logo'], $user->get_vendor_logo_upload_path());
+        if ($validator->fails()) {
+            $request->session()->put('postData', $postData);                
+            return redirect('show_signinvendor_dashboard')->withInput()->withErrors($validator);
+        }else{
 
-            $vendor_logo_filename = $fileMeta['filename'];
-            $vendor_logo_mime = $fileMeta['mime'];
-        }
-        else {
-            $vendor_logo_filename = '';
-            $vendor_logo_mime = '';
-        }
+            // add vendor logo
+            if (isset($postData['fld_logo'])) {
+                $fileMeta = $this->saveImageFile($postData['fld_logo'], $user->get_vendor_logo_upload_path());
 
-        $userData = UserInfo::where('user_id', '=', $request->input('user_id'))->first();
-        if(empty($userData)){
-            $userData = new UserInfo();
-            $userData->user_id = $postData['user_id'];
-        }
-        $userData->enterprise_name = $postData['fld_enterprise_name'];
-        $userData->business_type = $postData['fld_business_type'];
-        $userData->business_address = $postData['fld_business_address'];
-        $userData->business_address_zipcode = $postData['fld_business_address_zipcode']; 
-        $userData->location = $postData['fld_business_location'];                
-        $userData->client_size = $postData['fld_client_size'];
-        $userData->staff_size = $postData['fld_staff_size'];
+                $vendor_logo_filename = $fileMeta['filename'];
+                $vendor_logo_mime = $fileMeta['mime'];
+            }
+            else {
+                $vendor_logo_filename = '';
+                $vendor_logo_mime = '';
+            }
 
-        if(!empty($vendor_logo_filename)){
-            $userData->logo = $vendor_logo_filename;
-        }
+            $userData = UserInfo::where('user_id', '=', $request->input('user_id'))->first();
+            if(empty($userData)){
+                $userData = new UserInfo();
+                $userData->user_id = $postData['user_id'];
+            }
+            $userData->enterprise_name = $postData['fld_enterprise_name'];
+            $userData->business_type = $postData['fld_business_type'];
+            $userData->business_address = $postData['fld_business_address'];
+            $userData->business_address_zipcode = $postData['fld_business_address_zipcode']; 
+            $userData->location = $postData['fld_business_location'];                
+            $userData->client_size = $postData['fld_client_size'];
+            $userData->staff_size = $postData['fld_staff_size'];
 
-        $userData->business_timezone = $postData['fld_business_timezone'];
-        $userData->business_email_for_inquiry = $postData['fld_business_email_for_inquiry'];
-        $userData->website = $postData['fld_website'];
-        $userData->about_your_enterprise = $postData['fld_about_your_enterprise'];
-        $userData->area_of_service = $postData['fld_area_of_service'];
-        $userData->service_offered_patient_monitoring = (empty($postData['fld_service_offered_patient_monitoring']))?0:1;
-        $userData->service_offered_home_health = (empty($postData['fld_service_offered_home_health']))?0:1;
-        $userData->service_offered_activities = (empty($postData['fld_service_offered_activities']))?0:1;
-        $userData->service_offered_counselling = (empty($postData['fld_service_offered_counselling']))?0:1;
-        $userData->service_offered_support_group = (empty($postData['fld_service_offered_support_group']))?0:1;
-        $userData->service_offered_case_management = (empty($postData['fld_service_offered_case_management']))?0:1;
-        $userData->service_offered_food_nutrition = (empty($postData['fld_service_offered_food_nutrition']))?0:1;
-        $userData->service_offered_memory_care = (empty($postData['fld_service_offered_memory_care']))?0:1;
-        $userData->service_offered_vocational_help = (empty($postData['fld_service_offered_vocational_help']))?0:1;
-        $userData->membership_in_center = (empty($postData['fld_membership_in_center']))?0:1;
-        $userData->membership_virtual = (empty($postData['fld_membership_virtual']))?0:1;
-        $userData->membership_hybrid = (empty($postData['fld_membership_hybrid']))?0:1;
-        $userData->contact_person_firstname = $postData['fld_contact_person_firstname'];
-        $userData->contact_person_lastname = $postData['fld_contact_person_lastname'];
-        $userData->contact_person_position = $postData['fld_contact_person_position'];
-        $userData->contact_person_direct_line = $postData['fld_contact_person_direct_line'];
-        $userData->contact_person_email = $postData['fld_contact_person_email'];
-        $userData->save();
+            if(!empty($vendor_logo_filename)){
+                $userData->logo = $vendor_logo_filename;
+            }
 
-        $request->session()->flash('message', 'Successfully update details');
-        $request->session()->flash('alert-class', 'alert-success'); 
-        return redirect()->route('show_signinvendor_dashboard');                 
+            $userData->business_timezone = $postData['fld_business_timezone'];
+            $userData->business_email_for_inquiry = $postData['fld_business_email_for_inquiry'];
+            $userData->website = $postData['fld_website'];
+            $userData->about_your_enterprise = $postData['fld_about_your_enterprise'];
+            $userData->area_of_service = $postData['fld_area_of_service'];
+            $userData->service_offered_patient_monitoring = (empty($postData['fld_service_offered_patient_monitoring']))?0:1;
+            $userData->service_offered_home_health = (empty($postData['fld_service_offered_home_health']))?0:1;
+            $userData->service_offered_activities = (empty($postData['fld_service_offered_activities']))?0:1;
+            $userData->service_offered_counselling = (empty($postData['fld_service_offered_counselling']))?0:1;
+            $userData->service_offered_support_group = (empty($postData['fld_service_offered_support_group']))?0:1;
+            $userData->service_offered_case_management = (empty($postData['fld_service_offered_case_management']))?0:1;
+            $userData->service_offered_food_nutrition = (empty($postData['fld_service_offered_food_nutrition']))?0:1;
+            $userData->service_offered_memory_care = (empty($postData['fld_service_offered_memory_care']))?0:1;
+            $userData->service_offered_vocational_help = (empty($postData['fld_service_offered_vocational_help']))?0:1;
+            $userData->membership_in_center = (empty($postData['fld_membership_in_center']))?0:1;
+            $userData->membership_virtual = (empty($postData['fld_membership_virtual']))?0:1;
+            $userData->membership_hybrid = (empty($postData['fld_membership_hybrid']))?0:1;
+            $userData->contact_person_firstname = $postData['fld_contact_person_firstname'];
+            $userData->contact_person_lastname = $postData['fld_contact_person_lastname'];
+            $userData->contact_person_position = $postData['fld_contact_person_position'];
+            $userData->contact_person_direct_line = $postData['fld_contact_person_direct_line'];
+            $userData->contact_person_email = $postData['fld_contact_person_email'];
+            $userData->save();
+
+            $request->session()->flash('message', 'Successfully update details');
+            $request->session()->flash('alert-class', 'alert-success'); 
+            return redirect()->route('show_signinvendor_dashboard'); 
+
+        }                 
     }
 
     public function show_vendor_finamce(){

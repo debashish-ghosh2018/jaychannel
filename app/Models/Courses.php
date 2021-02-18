@@ -23,10 +23,19 @@ class Courses extends Model
 
     public function Owner()
     {
-        return $this->hasOne('App\Models\UserInfo', 'user_id', 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     } 
+
+    public function OwnerInfo()
+    {
+        return $this->belongsTo(UserInfo::class, 'user_id', 'user_id');
+    }    
 
     public function coursesBooked(){
         return $this->hasMany('App\Models\UserCourseOrderLists', 'course_id');
     }  
+
+    public function CourseType(){
+        return $this->belongsTo(ContentTypes::class, 'content_type_id');
+    }         
 }

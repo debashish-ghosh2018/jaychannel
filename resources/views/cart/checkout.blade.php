@@ -284,7 +284,7 @@
                           <option value="United Kingdom">United Kingdom</option>
                           <option value="Ukraine">Ukraine</option>
                           <option value="United Arab Erimates">United Arab Emirates</option>
-                          <option value="United States of America">United States of America</option>
+                          <option value="United States of America" selected>United States of America</option>
                           <option value="Uraguay">Uruguay</option>
                           <option value="Uzbekistan">Uzbekistan</option>
                           <option value="Vanuatu">Vanuatu</option>
@@ -305,15 +305,15 @@
                   <div class="row mb-3">
                      <div class="col-lg-4 col-12">
                         <label>Town/City <span class="textred">*</span></label>
-                        <input type="text" class="form-control custom-file float-right" name="fldCity" placeholder="Town/City" required />
+                        <input type="text" class="form-control custom-file float-right" name="fldCity" placeholder="Town/City" value="{{ $user->city }}" required />
                      </div>
                      <div class="col-lg-4 col-12">
                         <label>State <span class="textred">*</span></label>
-                        <input type="text" class="form-control custom-file float-right" placeholder="State" name="fldState" required />
+                        <input type="text" class="form-control custom-file float-right" placeholder="State" name="fldState" value="{{ $user->state }}" required />
                      </div>
                      <div class="col-lg-4 col-12">
                         <label>Postal/Zip <span class="textred">*</span></label>
-                        <input type="number" class="form-control custom-file float-right" placeholder="Postal/Zip" name="fldPostal" required />
+                        <input type="number" class="form-control custom-file float-right" placeholder="Postal/Zip" name="fldPostal" value="{{ $user->zipcode }}" required />
                      </div>
                   </div>
                   <!--<div class="row">

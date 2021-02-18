@@ -167,10 +167,11 @@
                   @endguest
 
                   @auth
-                     <a onclick="signin()" class="nav-link dropbtn">Welcome ({{ Auth::user()->name }})</a>
+                     <a onclick="signin()" class="nav-link dropbtn">
+                      Hey {{ Auth::user()->name }}!<br/><span style="font-size: 14px;">@if (Session::get('user_type') == 'Member') You've {{ Session::get('user_available_credits') }} Credits @elseif (Session::get('user_type') == 'Enterprise') You've {{ Session::get('user_available_credits') }} Credits @endif</span></a>
                      <div id="loginDropdown" class="dropdown-content">
-                        <a href="{{ route(Auth::user()->getUserAccountUrl()) }}">Manage Profile</a>
-						<a href="{{ route('view_cart') }}">View Cart</a>
+                        <a href="{{ route(Auth::user()->getUserAccountUrl()) }}">Manage Dashboard</a>
+                        <a href="{{ route('view_cart') }}">View Cart</a>
                         <a href="{{ route('user_logout') }}">Sign Out</a>
                      </div>                      
                   @endauth                  
@@ -241,10 +242,10 @@
             <p class="m-0 py-3"> © 2020  <a href="javascript:void(0)" class="hover-default">JayChannel powered by HealthJay Inc</a>. </p>
          </div>
          <div class="col-md-6 text-center " >
-            <p class="m-0 py-3"> <a href="javascript:void(0)" class="hover-default">Privacy Policy</a> &nbsp; | &nbsp;
-               <a href="javascript:void(0)" class="hover-default"> Terms</a>&nbsp; | &nbsp;
-               <a href="javascript:void(0)" class="hover-default"> Accessibility</a>&nbsp; | &nbsp;
-               <a href="javascript:void(0)" class="hover-default">  Cookie Policy</a>
+            <p class="m-0 py-3"> <a href="{{ route('show_page') }}/privacy_policy" class="hover-default">Privacy Policy</a> &nbsp; | &nbsp;
+               <a href="{{ route('show_page') }}/terms_coditions" class="hover-default"> Terms</a>&nbsp; | &nbsp;
+               <a href="{{ route('show_page') }}/accessibility" class="hover-default"> Accessibility</a>&nbsp; | &nbsp;
+               <a href="{{ route('show_page') }}/cookie_policy" class="hover-default"> Cookie Policy</a>
             </p>
          </div>
       </div>

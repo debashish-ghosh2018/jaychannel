@@ -4,6 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
+use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
+
 use App\Models\User;
 
 class UsersController extends Controller
@@ -28,9 +37,65 @@ class UsersController extends Controller
     public function index()
     {
         $you = auth()->user();
-        $users = User::all();
+        //$users = User::all();
+        $users = User::whereNull('user_type')->get();
         return view('admin.dashboard.admin.usersList', compact('users', 'you'));
     }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return view('admin.dashboard.admin.userAddForm');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:3', 'confirmed'],
+            'address' => ['required', 'string', 'max:255'],
+            'tel' => ['required', 'numeric'],                        
+        ]);
+
+        if ($validator->fails()) {
+            $data['msg'] = 'All Errors';
+            $data['data']['error'] = $validator->errors(); 
+
+         
+            session()->flash('error', 'Please provide name, email, address, mobile no and password!');
+            return redirect()->back()->withInput()->withErrors($validator);
+
+        }else{
+            $checkUser = User::where('email', $request->email)->first();
+            
+            if($checkUser) {
+                session()->flash('error', 'User already exists!');
+                return redirect()->error_message();
+            }else{
+                $user = new User;
+                $user->name = $request['name'];
+                $user->email = $request['email'];
+                $user->address = $request['address'];
+                $user->tel = $request['tel'];                                   
+                $user->password = Hash::make($request['password']);
+              
+                $status = $user->save();
+                session()->flash('success_message', 'User added successfully!');
+                return redirect()->route('users.index');                
+            }
+        }
+    }    
 
     /**
      * Display the specified resource.

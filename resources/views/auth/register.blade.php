@@ -121,7 +121,7 @@
                   <label class="inline">Address </label>
                 </div>
                 <div class="col-lg-10 col-sm-10 col-xs-10">
-                  <input type="text" class="form-control custom-file float-right" name="address" placeholder="{{ __('Address') }}" required />
+                  <input type="text" class="form-control custom-file float-right" name="address" placeholder="{{ __('Address') }}" value="{{ old('address') }}" required />
                   <label class="error">{{ $errors->first('address') }}</label>
                 </div>
               </div>
@@ -131,7 +131,7 @@
                   <label class="inline">Tel </label>
                 </div>
                 <div class="col-lg-10 col-sm-10 col-xs-10">
-                  <input type="tel" class="form-control custom-file float-right" name="tel" placeholder="{{ __('Tel') }}" required />
+                  <input type="tel" class="form-control custom-file float-right" name="tel" placeholder="{{ __('Tel') }}" value="{{ old('tel') }}" required />
                   <label class="error">{{ $errors->first('tel') }}</label>
                 </div>
               </div>
@@ -288,6 +288,30 @@
 
 @endsection
 
-@section('javascript')
+@section('scripts')
+<script>
+    /* When the user clicks on the button, 
+    toggle between hiding and showing the dropdown content */
+    function signin() {
+      document.getElementById("loginDropdown").classList.toggle("show");
+    }    
 
+    function myFunction() {
+      document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+</script>	
 @endsection

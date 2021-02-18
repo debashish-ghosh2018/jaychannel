@@ -37,7 +37,7 @@
                               <td>{{ $credit->cost_amount }}</td>
                               <td>{{ $credit->points }}</td>                              
                               <td>
-                                @if ($credit->status === 1)
+                                @if ($credit->status == 1)
                                   Enabled
                                 @else
                                   Disable

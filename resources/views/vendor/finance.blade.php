@@ -49,7 +49,7 @@
                      <tr >
                         <td class="blue">{{ $order->booking_no }}</td>
                         <td class="blue"><?php echo date("M Y", strtotime($order->created_at)); ?></td>
-                        <td class="blue">{{ $order->credit_used }}</td>
+                        <td class="blue">{{ $order->credit_used - $order->credit_returned }}</td>
                         <td class="blue">Completed</td>
                      </tr>
                     @endforeach
